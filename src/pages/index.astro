@@ -18,6 +18,15 @@ const wfcPlaces = filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], faciliti
 const areas = await getAreas(supabase);
 ---
 <BaseLayout title="Nongkrong Kediri" description={SITE.description} jsonLd={[websiteSchema()]}>
+  <script is:inline>
+    (() => {
+      const hash = window.location.hash;
+      if (!hash) return;
+      const params = new URLSearchParams(hash.slice(1));
+      const isRecovery = params.get('type') === 'recovery' || Boolean(params.get('access_token'));
+      if (isRecovery) window.location.replace(`/admin/reset-password/${hash}`);
+    })();
+  </script>
   <Container>
     <HomeHero />
     <div class="space-y-14 py-8">
