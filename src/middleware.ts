@@ -2,23 +2,39 @@ import { defineMiddleware } from 'astro:middleware';
 import { adminEmails, getSupabaseServer, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  const path = context.url.pathname;
+  const isApiRoute = path.startsWith('/api/');
+
+  if (isApiRoute) {
+    const supabase = getSupabaseServer(context);
+    context.locals.supabase = supabase || undefined;
+    context.locals.isSupabaseConfigured = isSupabaseConfigured(context);
+    context.locals.user = null;
+    context.locals.isAdmin = false;
+    return next();
+  }
+
   const supabase = getSupabaseServer(context);
   context.locals.supabase = supabase || undefined;
   context.locals.isSupabaseConfigured = isSupabaseConfigured(context);
 
   if (supabase) {
-    const { data } = await supabase.auth.getUser();
-    context.locals.user = data.user;
-    const allowed = adminEmails(context);
-    context.locals.isAdmin = Boolean(
-      data.user && (allowed.length === 0 || allowed.includes((data.user.email || '').toLowerCase()))
-    );
+    try {
+      const { data } = await supabase.auth.getUser();
+      context.locals.user = data.user;
+      const allowed = adminEmails(context);
+      context.locals.isAdmin = Boolean(
+        data.user && (allowed.length === 0 || allowed.includes((data.user.email || '').toLowerCase()))
+      );
+    } catch {
+      context.locals.user = null;
+      context.locals.isAdmin = false;
+    }
   } else {
     context.locals.user = null;
     context.locals.isAdmin = true;
   }
 
-  const path = context.url.pathname;
   const isAdminRoute = path === '/admin' || path.startsWith('/admin/');
   const isLoginRoute = path === '/admin/login' || path === '/admin/login/';
 
