@@ -10,6 +10,10 @@ export const SITE = {
   province: 'Jawa Timur'
 };
 
+export function siteUrl(runtimeUrl?: string | null) {
+  return (runtimeUrl || SITE.url).replace(/\/$/, '');
+}
+
 export const MAIN_NAV = [
   { label: 'home', href: '/' },
   { label: 'tempat', href: '/tempat-ngopi-kediri/' },

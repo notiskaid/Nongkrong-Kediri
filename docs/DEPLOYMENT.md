@@ -40,7 +40,7 @@ Astro SSR / Hybrid
 Untuk production, isi variable berikut di Cloudflare:
 
 ```txt
-PUBLIC_SITE_URL=https://nongkrongkediri.id
+PUBLIC_SITE_URL=https://nongkrongkediri.web.id
 PUBLIC_SUPABASE_URL=
 PUBLIC_SUPABASE_ANON_KEY=
 ADMIN_EMAILS=mr.winando@gmail.com

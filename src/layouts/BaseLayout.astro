@@ -3,7 +3,6 @@ import 'remixicon/fonts/remixicon.css';
 import '@/assets/styles/global.css';
 import SiteHeader from '@/components/layout/SiteHeader.astro';
 import SiteFooter from '@/components/layout/SiteFooter.astro';
-import { SITE } from '@/lib/constants';
 import { titleTemplate, truncateDescription } from '@/lib/seo/meta';
 import { canonicalUrl } from '@/lib/seo/canonical';
 
@@ -20,7 +19,8 @@ const {
 
 const pageTitle = titleTemplate(title);
 const pageDescription = truncateDescription(description);
-const pageCanonical = canonical || canonicalUrl(Astro.url.pathname);
+const runtimeSiteUrl = Astro.locals.runtime?.env?.PUBLIC_SITE_URL;
+const pageCanonical = canonical || canonicalUrl(Astro.url.pathname, null, runtimeSiteUrl);
 const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter(Boolean);
 ---
 <!doctype html>

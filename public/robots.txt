@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /search/
 
-Sitemap: https://nongkrongkediri.id/sitemap.xml
+Sitemap: https://nongkrongkediri.web.id/sitemap.xml
