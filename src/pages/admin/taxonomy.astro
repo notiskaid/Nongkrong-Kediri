@@ -1,0 +1,35 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import TaxonomyManager from '@/components/admin/TaxonomyManager';
+import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
+
+let sections: any[] = [];
+let errorMessage = '';
+try {
+  const [areas, categories, useCases, facilities] = await Promise.all([
+    getAreas(Astro.locals.supabase),
+    getCategories(Astro.locals.supabase),
+    getUseCases(Astro.locals.supabase),
+    getFacilities(Astro.locals.supabase)
+  ]);
+  sections = [
+    { type: 'areas', label: 'Area', terms: areas },
+    { type: 'categories', label: 'Kategori', terms: categories },
+    { type: 'use_cases', label: 'Use case', hasIcon: true, terms: useCases },
+    { type: 'facilities', label: 'Fasilitas', hasIcon: true, terms: facilities }
+  ];
+} catch (error) {
+  errorMessage = error instanceof Error ? error.message : 'Gagal mengambil taxonomy.';
+}
+---
+<AdminLayout title="Taxonomy Admin">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">Taxonomy</h1>
+    <p class="mt-2 text-sm text-muted">Kelola area, kategori, use case, dan fasilitas yang dipakai tempat.</p>
+  </div>
+  {errorMessage ? (
+    <div class="rounded-2xl border border-line bg-surface p-5 text-sm text-muted">{errorMessage}</div>
+  ) : (
+    <TaxonomyManager client:load sections={sections} />
+  )}
+</AdminLayout>
