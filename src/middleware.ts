@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
-import { adminEmails, getSupabaseServer, isSupabaseConfigured } from '@/lib/supabase/server';
+import { getAdminSession } from '@/lib/admin/session';
+import { getSupabaseAdmin, getSupabaseServer, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
@@ -14,28 +15,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  const supabase = getSupabaseServer(context);
+  const session = await getAdminSession(context);
+  const supabase = session ? getSupabaseAdmin(context) || getSupabaseServer(context) : getSupabaseServer(context);
   context.locals.supabase = supabase || undefined;
   context.locals.isSupabaseConfigured = isSupabaseConfigured(context);
-
-  if (supabase) {
-    try {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      context.locals.user = data.user || null;
-      const allowed = adminEmails(context);
-      context.locals.isAdmin = Boolean(
-        data.user && (allowed.length === 0 || allowed.includes((data.user.email || '').toLowerCase()))
-      );
-    } catch (error) {
-      console.error('Admin auth check failed', error);
-      context.locals.user = null;
-      context.locals.isAdmin = false;
-    }
-  } else {
-    context.locals.user = null;
-    context.locals.isAdmin = true;
-  }
+  context.locals.user = session ? ({ email: session.email } as any) : null;
+  context.locals.isAdmin = Boolean(session);
 
   const isAdminRoute = path === '/admin' || path.startsWith('/admin/');
   const isLoginRoute = path === '/admin/login' || path === '/admin/login/';

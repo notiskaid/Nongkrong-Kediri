@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
-import { adminEmails, getSupabaseServer } from '@/lib/supabase/server';
+import { createAdminSession } from '@/lib/admin/session';
+import { adminEmails, getSupabaseAdmin, getSupabaseServer } from '@/lib/supabase/server';
 
 export const POST: APIRoute = async (context) => {
   const supabase = getSupabaseServer(context);
@@ -15,14 +16,33 @@ export const POST: APIRoute = async (context) => {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return fail(context, error.message, 400, wantsJson);
 
-  const allowed = adminEmails(context);
-  if (allowed.length > 0 && !allowed.includes(email.toLowerCase())) {
+  const normalizedEmail = email.toLowerCase();
+  const isAdmin = await isAllowedAdmin(context, normalizedEmail);
+  if (!isAdmin) {
     await supabase.auth.signOut();
     return fail(context, 'Email ini tidak punya akses admin.', 403, wantsJson);
   }
 
+  await createAdminSession(context, normalizedEmail);
   return wantsJson ? json({ ok: true }, 200) : context.redirect('/admin/', 303);
 };
+
+async function isAllowedAdmin(context: Parameters<APIRoute>[0], email: string) {
+  const allowed = adminEmails(context);
+  if (allowed.includes(email)) return true;
+
+  const adminSupabase = getSupabaseAdmin(context);
+  if (!adminSupabase) return allowed.length === 0;
+
+  const { data, error } = await adminSupabase
+    .from('admin_users')
+    .select('email')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (error) throw error;
+  return Boolean(data);
+}
 
 function fail(context: Parameters<APIRoute>[0], message: string, status: number, wantsJson = true) {
   if (wantsJson) return json({ error: message }, status);

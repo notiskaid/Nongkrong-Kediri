@@ -6,6 +6,7 @@ import type { SupabaseClient, User } from '@supabase/supabase-js';
 type CloudflareRuntimeEnv = {
   ASSETS?: Fetcher;
   NK_MEDIA?: R2Bucket;
+  SESSION?: KVNamespace;
   PUBLIC_SITE_URL?: string;
   PUBLIC_SUPABASE_URL?: string;
   PUBLIC_SUPABASE_ANON_KEY?: string;

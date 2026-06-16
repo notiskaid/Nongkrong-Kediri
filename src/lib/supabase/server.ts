@@ -1,14 +1,17 @@
 import type { APIContext } from 'astro';
+import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
+import { getAdminSession } from '@/lib/admin/session';
 
 function runtimeEnv(context?: Pick<APIContext, 'locals'>) {
   return context?.locals?.runtime?.env || {};
 }
 
-function envValue(context: Pick<APIContext, 'locals'> | undefined, key: 'PUBLIC_SUPABASE_URL' | 'PUBLIC_SUPABASE_ANON_KEY' | 'ADMIN_EMAILS') {
+function envValue(context: Pick<APIContext, 'locals'> | undefined, key: 'PUBLIC_SUPABASE_URL' | 'PUBLIC_SUPABASE_ANON_KEY' | 'SUPABASE_SERVICE_ROLE_KEY' | 'ADMIN_EMAILS') {
   const env = runtimeEnv(context);
   if (key === 'PUBLIC_SUPABASE_URL') return env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
   if (key === 'PUBLIC_SUPABASE_ANON_KEY') return env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+  if (key === 'SUPABASE_SERVICE_ROLE_KEY') return env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.SUPABASE_SERVICE_ROLE_KEY || '';
   return env.ADMIN_EMAILS || import.meta.env.ADMIN_EMAILS || '';
 }
 
@@ -41,6 +44,18 @@ export function getSupabaseServer(context: Pick<APIContext, 'cookies' | 'locals'
   });
 }
 
+export function getSupabaseAdmin(context?: Pick<APIContext, 'locals'>) {
+  const url = envValue(context, 'PUBLIC_SUPABASE_URL');
+  const serviceRoleKey = envValue(context, 'SUPABASE_SERVICE_ROLE_KEY');
+  if (!url || !serviceRoleKey) return null;
+  return createClient(url, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+}
+
 export function adminEmails(context?: Pick<APIContext, 'locals'>) {
   return envValue(context, 'ADMIN_EMAILS')
     .split(',')
@@ -49,20 +64,15 @@ export function adminEmails(context?: Pick<APIContext, 'locals'>) {
 }
 
 export async function ensureAdmin(context: APIContext) {
-  const supabase = getSupabaseServer(context);
+  const session = await getAdminSession(context);
+  const supabase = getSupabaseAdmin(context) || getSupabaseServer(context);
   if (!supabase) {
     return { ok: false as const, response: new Response(JSON.stringify({ error: 'Database belum tersambung.' }), { status: 503 }) };
   }
 
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
+  if (!session) {
     return { ok: false as const, response: new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }) };
   }
 
-  const allowed = adminEmails(context);
-  if (allowed.length > 0 && !allowed.includes((data.user.email || '').toLowerCase())) {
-    return { ok: false as const, response: new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403 }) };
-  }
-
-  return { ok: true as const, supabase, user: data.user };
+  return { ok: true as const, supabase, user: { email: session.email } };
 }
