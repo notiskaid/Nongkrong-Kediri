@@ -22,7 +22,10 @@ export function getSupabaseServer(context: Pick<APIContext, 'cookies' | 'locals'
   return createServerClient(envValue(context, 'PUBLIC_SUPABASE_URL'), envValue(context, 'PUBLIC_SUPABASE_ANON_KEY'), {
     cookies: {
       getAll() {
-        return (context.cookies as any).getAll().map((cookie: { name: string; value: string }) => ({ name: cookie.name, value: cookie.value }));
+        const getAll = (context.cookies as any).getAll;
+        return typeof getAll === 'function'
+          ? getAll.call(context.cookies).map((cookie: { name: string; value: string }) => ({ name: cookie.name, value: cookie.value }))
+          : [];
       },
       setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
         cookiesToSet.forEach(({ name, value, options }) => {

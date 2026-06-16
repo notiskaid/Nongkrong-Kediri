@@ -6,26 +6,48 @@ import SeoPageHeader from '@/components/seo/SeoPageHeader.astro';
 import SeoContentRenderer from '@/components/seo/SeoContentRenderer.astro';
 import RelatedSeoPages from '@/components/seo/RelatedSeoPages.astro';
 import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
+import QuickLinks from '@/components/home/QuickLinks.astro';
+import FeaturedPlaces from '@/components/home/FeaturedPlaces.astro';
+import WfcPicks from '@/components/home/WfcPicks.astro';
+import AreaShortcut from '@/components/home/AreaShortcut.astro';
+import { getAreas } from '@/lib/queries/taxonomy';
+import { SITE } from '@/lib/constants';
 import { getPublishedPlaces, filterPlacesByConfig } from '@/lib/queries/places';
 import { getPublishedSeoPages, getSeoPageBySlug } from '@/lib/queries/seo-pages';
-import { breadcrumbSchema, itemListSchema } from '@/lib/seo/schema';
+import { breadcrumbSchema, itemListSchema, websiteSchema } from '@/lib/seo/schema';
 
 const slug = String(Astro.params.slug || '').replace(/^\/+|\/+$/g, '');
-const page = await getSeoPageBySlug(Astro.locals.supabase, slug);
-if (!page) Astro.response.status = 404;
+const isHomeFallback = !slug;
+const page = isHomeFallback ? null : await getSeoPageBySlug(Astro.locals.supabase, slug);
+if (!isHomeFallback && !page) Astro.response.status = 404;
 const allPlaces = await getPublishedPlaces(Astro.locals.supabase);
 const places = page ? filterPlacesByConfig(allPlaces, page.query_config) : [];
-const allSeoPages = await getPublishedSeoPages(Astro.locals.supabase);
+const allSeoPages = isHomeFallback ? [] : await getPublishedSeoPages(Astro.locals.supabase);
 const relatedPages = allSeoPages.filter((item) => item.slug !== page?.slug).slice(0, 6);
+const featuredPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { is_featured: true, sort: 'featured_first', limit: 6 }) : [];
+const wfcPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], facilities: ['wifi', 'colokan'], limit: 3, sort: 'featured_first' }) : [];
+const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
 ---
 <SeoPageLayout
-  title={page?.meta_title || page?.title || 'Halaman tidak ditemukan'}
-  description={page?.meta_description || page?.description || 'Halaman tidak ditemukan.'}
+  title={isHomeFallback ? 'Nongkrong Kediri' : page?.meta_title || page?.title || 'Halaman tidak ditemukan'}
+  description={isHomeFallback ? SITE.description : page?.meta_description || page?.description || 'Halaman tidak ditemukan.'}
   robots={page?.robots || 'index,follow'}
-  jsonLd={page ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: page.h1, href: `/${page.slug}/` }]), itemListSchema(page, places)] : []}
+  jsonLd={isHomeFallback ? [websiteSchema()] : page ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: page.h1, href: `/${page.slug}/` }]), itemListSchema(page, places)] : []}
 >
-  <Container class="py-10">
-    {page ? (
+  {isHomeFallback ? (
+    <Container>
+      <HomeHero />
+      <div class="space-y-14 py-8">
+        <QuickLinks />
+        <FeaturedPlaces places={featuredPlaces} />
+        <WfcPicks places={wfcPlaces} />
+        <AreaShortcut areas={areas} />
+      </div>
+    </Container>
+  ) : (
+    <Container class="py-10">
+      {page ? (
       <>
         <Breadcrumbs items={[{ label: page.h1 }]} />
         <SeoPageHeader page={page} />
@@ -42,8 +64,9 @@ const relatedPages = allSeoPages.filter((item) => item.slug !== page?.slug).slic
           <RelatedSeoPages pages={relatedPages} />
         </div>
       </>
-    ) : (
-      <div class="rounded-2xl border border-line bg-surface p-8"><h1 class="text-3xl font-bold">Halaman tidak ditemukan</h1><p class="mt-3 text-muted">Slug ini belum ada di seo_pages atau belum dipublish.</p></div>
-    )}
-  </Container>
+      ) : (
+        <div class="rounded-2xl border border-line bg-surface p-8"><h1 class="text-3xl font-bold">Halaman tidak ditemukan</h1><p class="mt-3 text-muted">Slug ini belum ada di seo_pages atau belum dipublish.</p></div>
+      )}
+    </Container>
+  )}
 </SeoPageLayout>

@@ -3,6 +3,15 @@ import type { Place, PlaceQueryConfig } from '@/types/place';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { mockPlaces } from '@/lib/mock';
 
+const QUERY_TIMEOUT_MS = 3500;
+
+function withTimeout<T>(promise: PromiseLike<T>): Promise<T> {
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Supabase query timeout')), QUERY_TIMEOUT_MS))
+  ]);
+}
+
 function normalizeTerms(value: unknown): TaxonomyTerm[] {
   if (!value) return [];
   if (Array.isArray(value)) return value as TaxonomyTerm[];
@@ -61,47 +70,64 @@ export function filterPlacesByConfig(places: Place[], config?: PlaceQueryConfig 
 export async function getPublishedPlaces(supabase?: SupabaseClient | null): Promise<Place[]> {
   if (!supabase) return mockPlaces.filter((place) => place.status === 'published');
 
-  const { data, error } = await supabase
-    .from('places_public')
-    .select('*')
-    .eq('status', 'published')
-    .order('sort_order', { ascending: true })
-    .order('name', { ascending: true });
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('places_public')
+      .select('*')
+      .eq('status', 'published')
+      .order('sort_order', { ascending: true })
+      .order('name', { ascending: true }));
 
-  if (error || !data) {
-    console.warn('getPublishedPlaces fallback:', error?.message);
+    if (error || !data) {
+      console.warn('getPublishedPlaces fallback:', error?.message);
+      return mockPlaces.filter((place) => place.status === 'published');
+    }
+
+    return data.map(normalizePlace);
+  } catch {
     return mockPlaces.filter((place) => place.status === 'published');
   }
-
-  return data.map(normalizePlace);
 }
 
 export async function getAllPlacesForAdmin(supabase?: SupabaseClient | null): Promise<Place[]> {
   if (!supabase) return mockPlaces;
 
-  const { data, error } = await supabase
-    .from('places_public')
-    .select('*')
-    .order('updated_at', { ascending: false });
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('places_public')
+      .select('*')
+      .order('updated_at', { ascending: false }));
 
-  if (error || !data) return mockPlaces;
-  return data.map(normalizePlace);
+    if (error || !data) return mockPlaces;
+    return data.map(normalizePlace);
+  } catch {
+    return mockPlaces;
+  }
 }
 
 export async function getPlaceBySlug(supabase: SupabaseClient | null | undefined, slug: string) {
   if (!supabase) return mockPlaces.find((place) => place.slug === slug && place.status === 'published') || null;
 
-  const { data, error } = await supabase.from('places_public').select('*').eq('slug', slug).maybeSingle();
-  if (error || !data || data.status !== 'published') return null;
-  return normalizePlace(data);
+  try {
+    const { data, error } = await withTimeout(supabase.from('places_public').select('*').eq('slug', slug).maybeSingle());
+    if (error) return mockPlaces.find((place) => place.slug === slug && place.status === 'published') || null;
+    if (!data || data.status !== 'published') return null;
+    return normalizePlace(data);
+  } catch {
+    return mockPlaces.find((place) => place.slug === slug && place.status === 'published') || null;
+  }
 }
 
 export async function getPlaceByIdForAdmin(supabase: SupabaseClient | null | undefined, id: string) {
   if (!supabase) return mockPlaces.find((place) => place.id === id) || null;
 
-  const { data, error } = await supabase.from('places_public').select('*').eq('id', id).maybeSingle();
-  if (error || !data) return null;
-  return normalizePlace(data);
+  try {
+    const { data, error } = await withTimeout(supabase.from('places_public').select('*').eq('id', id).maybeSingle());
+    if (error || !data) return mockPlaces.find((place) => place.id === id) || null;
+    return normalizePlace(data);
+  } catch {
+    return mockPlaces.find((place) => place.id === id) || null;
+  }
 }
 
 export async function getFeaturedPlaces(supabase?: SupabaseClient | null, limit = 6) {
