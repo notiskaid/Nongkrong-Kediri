@@ -1,0 +1,12 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import PlaceForm from '@/components/admin/PlaceForm';
+import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
+const [areas, categories, useCases, facilities] = await Promise.all([
+  getAreas(Astro.locals.supabase), getCategories(Astro.locals.supabase), getUseCases(Astro.locals.supabase), getFacilities(Astro.locals.supabase)
+]);
+---
+<AdminLayout title="Tambah Tempat">
+  <div class="mb-6"><h1 class="text-3xl font-bold">Tambah tempat</h1><p class="mt-2 text-sm text-muted">Input satu tempat, pilih taxonomy, lalu publish.</p></div>
+  <PlaceForm client:load areas={areas} categories={categories} useCases={useCases} facilities={facilities} />
+</AdminLayout>

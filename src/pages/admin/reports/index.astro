@@ -1,0 +1,17 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import ReportTable from '@/components/admin/ReportTable';
+
+let reports = [];
+if (Astro.locals.supabase) {
+  const { data } = await Astro.locals.supabase
+    .from('place_reports_public')
+    .select('*')
+    .order('created_at', { ascending: false });
+  reports = data || [];
+}
+---
+<AdminLayout title="Reports">
+  <div class="mb-6"><h1 class="text-3xl font-bold">Reports</h1><p class="mt-2 text-sm text-muted">Laporan data salah dari halaman detail tempat.</p></div>
+  {reports.length ? <ReportTable client:load reports={reports} /> : <div class="rounded-2xl border border-line bg-surface p-6 text-sm text-muted">Belum ada laporan. Jika Supabase belum aktif, laporan demo tidak tersimpan.</div>}
+</AdminLayout>

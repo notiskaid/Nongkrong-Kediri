@@ -1,0 +1,13 @@
+---
+const { status } = Astro.props;
+const map: Record<string, string> = {
+  published: 'border-green-700 text-green-700',
+  draft: 'border-line text-muted',
+  review: 'border-yellow-700 text-yellow-700',
+  closed: 'border-red-700 text-red-700',
+  pending: 'border-yellow-700 text-yellow-700',
+  resolved: 'border-green-700 text-green-700',
+  rejected: 'border-red-700 text-red-700'
+};
+---
+<span class={`rounded-lg border px-2 py-1 text-xs ${map[status] || map.draft}`}>{status}</span>

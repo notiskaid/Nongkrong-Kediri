@@ -1,0 +1,30 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
+import QuickLinks from '@/components/home/QuickLinks.astro';
+import FeaturedPlaces from '@/components/home/FeaturedPlaces.astro';
+import WfcPicks from '@/components/home/WfcPicks.astro';
+import AreaShortcut from '@/components/home/AreaShortcut.astro';
+import { getAreas } from '@/lib/queries/taxonomy';
+import { filterPlacesByConfig, getFeaturedPlaces, getPublishedPlaces } from '@/lib/queries/places';
+import { SITE } from '@/lib/constants';
+import { websiteSchema } from '@/lib/seo/schema';
+
+const supabase = Astro.locals.supabase;
+const featuredPlaces = await getFeaturedPlaces(supabase, 6);
+const allPlaces = await getPublishedPlaces(supabase);
+const wfcPlaces = filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], facilities: ['wifi', 'colokan'], limit: 3, sort: 'featured_first' });
+const areas = await getAreas(supabase);
+---
+<BaseLayout title="Nongkrong Kediri" description={SITE.description} jsonLd={[websiteSchema()]}>
+  <Container>
+    <HomeHero />
+    <div class="space-y-14 py-8">
+      <QuickLinks />
+      <FeaturedPlaces places={featuredPlaces} />
+      <WfcPicks places={wfcPlaces} />
+      <AreaShortcut areas={areas} />
+    </div>
+  </Container>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import PlaceForm from '@/components/admin/PlaceForm';
+import { getPlaceByIdForAdmin } from '@/lib/queries/places';
+import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
+const id = Astro.params.id!;
+const [place, areas, categories, useCases, facilities] = await Promise.all([
+  getPlaceByIdForAdmin(Astro.locals.supabase, id),
+  getAreas(Astro.locals.supabase),
+  getCategories(Astro.locals.supabase),
+  getUseCases(Astro.locals.supabase),
+  getFacilities(Astro.locals.supabase)
+]);
+if (!place) Astro.response.status = 404;
+---
+<AdminLayout title={place ? `Edit ${place.name}` : 'Tempat tidak ditemukan'}>
+  {place ? (
+    <>
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div><h1 class="text-3xl font-bold">Edit tempat</h1><p class="mt-2 text-sm text-muted">{place.name}</p></div>
+        <a href={`/tempat/${place.slug}/`} class="rounded-xl border border-line bg-surface px-4 py-2 text-sm no-underline">Preview</a>
+      </div>
+      <PlaceForm client:load place={place} areas={areas} categories={categories} useCases={useCases} facilities={facilities} />
+    </>
+  ) : <div class="rounded-2xl border border-line bg-surface p-6">Tempat tidak ditemukan.</div>}
+</AdminLayout>

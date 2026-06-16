@@ -1,0 +1,11 @@
+---
+import Badge from '@/components/base/Badge.astro';
+import type { Place } from '@/types/place';
+const { place } = Astro.props as { place: Place };
+---
+<section class="rounded-2xl border border-line bg-surface p-5">
+  <h2 class="text-xl font-semibold">Fasilitas</h2>
+  <div class="mt-4 flex flex-wrap gap-2">
+    {place.facilities.length ? place.facilities.map((term) => <Badge icon={term.icon}>{term.name}</Badge>) : <p class="text-sm text-muted">Fasilitas belum dicatat.</p>}
+  </div>
+</section>

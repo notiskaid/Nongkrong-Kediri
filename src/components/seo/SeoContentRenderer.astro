@@ -1,0 +1,24 @@
+---
+import FaqBlock from './FaqBlock.astro';
+import type { SeoContentBlock } from '@/types/seo-page';
+const { blocks = [] } = Astro.props as { blocks?: SeoContentBlock[] | null };
+---
+{blocks?.length ? (
+  <div class="space-y-8">
+    {blocks.map((block) => (
+      <>
+        {block.type === 'markdown' && <div class="prose-nk whitespace-pre-line">{block.content}</div>}
+        {block.type === 'faq' && <FaqBlock items={block.items} />}
+        {block.type === 'internal_links' && (
+          <section class="rounded-2xl border border-line bg-surface p-5">
+            <h2 class="text-xl font-semibold">{block.title || 'Rekomendasi lainnya'}</h2>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {block.links.map((link) => <a href={link.href} class="rounded-lg border border-line px-3 py-1.5 text-sm no-underline hover:border-ink">{link.label}</a>)}
+            </div>
+          </section>
+        )}
+        {block.type === 'note' && <p class="rounded-2xl border border-line bg-surface p-4 text-sm leading-7 text-muted">{block.content}</p>}
+      </>
+    ))}
+  </div>
+) : null}

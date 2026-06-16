@@ -1,0 +1,59 @@
+---
+import 'remixicon/fonts/remixicon.css';
+import '@/assets/styles/global.css';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import { SITE } from '@/lib/constants';
+import { titleTemplate, truncateDescription } from '@/lib/seo/meta';
+import { canonicalUrl } from '@/lib/seo/canonical';
+
+const {
+  title,
+  description,
+  canonical,
+  robots = 'index,follow',
+  image,
+  jsonLd = [],
+  hideHeader = false,
+  hideFooter = false
+} = Astro.props;
+
+const pageTitle = titleTemplate(title);
+const pageDescription = truncateDescription(description);
+const pageCanonical = canonical || canonicalUrl(Astro.url.pathname);
+const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter(Boolean);
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={pageCanonical} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={pageCanonical} />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta name="theme-color" content="#111111" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('nk-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if ((saved && saved === 'dark') || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+      } catch {}
+    </script>
+    {schemas.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
+  </head>
+  <body>
+    {!hideHeader && <SiteHeader />}
+    <main>
+      <slot />
+    </main>
+    {!hideFooter && <SiteFooter />}
+  </body>
+</html>

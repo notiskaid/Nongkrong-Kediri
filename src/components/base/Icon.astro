@@ -1,0 +1,4 @@
+---
+const { name, class: className = '' } = Astro.props;
+---
+<i class={`${name} ${className}`} aria-hidden="true"></i>

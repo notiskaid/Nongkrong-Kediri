@@ -1,0 +1,11 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import ImageUploader from '@/components/admin/ImageUploader';
+---
+<AdminLayout title="Media">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">Media</h1>
+    <p class="mt-2 text-sm text-muted">Upload gambar ke Cloudflare R2. Untuk foto tempat, lebih disarankan upload langsung dari form edit tempat agar path file otomatis memakai slug tempat.</p>
+  </div>
+  <ImageUploader client:load placeSlug="media" />
+</AdminLayout>

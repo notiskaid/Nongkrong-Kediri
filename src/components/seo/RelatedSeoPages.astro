@@ -1,0 +1,12 @@
+---
+import type { SeoPage } from '@/types/seo-page';
+const { pages = [] } = Astro.props as { pages: SeoPage[] };
+---
+{pages.length > 0 && (
+  <section class="rounded-2xl border border-line bg-surface p-5">
+    <h2 class="text-xl font-semibold">Halaman terkait</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {pages.map((page) => <a href={`/${page.slug}/`} class="rounded-lg border border-line px-3 py-1.5 text-sm no-underline hover:border-ink">{page.h1}</a>)}
+    </div>
+  </section>
+)}

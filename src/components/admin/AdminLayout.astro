@@ -1,0 +1,39 @@
+---
+import 'remixicon/fonts/remixicon.css';
+import '@/assets/styles/global.css';
+const { title = 'Admin Nongkrong Kediri' } = Astro.props;
+const nav = [
+  { label: 'Dashboard', href: '/admin/', icon: 'ri-dashboard-line' },
+  { label: 'Places', href: '/admin/places/', icon: 'ri-map-pin-line' },
+  { label: 'SEO Pages', href: '/admin/seo-pages/', icon: 'ri-pages-line' },
+  { label: 'Reports', href: '/admin/reports/', icon: 'ri-error-warning-line' },
+  { label: 'Media', href: '/admin/media/', icon: 'ri-image-line' }
+];
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="bg-paper text-ink">
+    <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
+      <aside class="border-b border-line bg-surface p-4 lg:min-h-screen lg:border-b-0 lg:border-r">
+        <a href="/admin/" class="flex items-center gap-2 text-lg font-semibold no-underline"><span class="flex size-9 items-center justify-center rounded-xl border border-line"><i class="ri-cup-line"></i></span> Admin NK</a>
+        <nav class="mt-6 flex gap-2 overflow-x-auto lg:block lg:space-y-1">
+          {nav.map((item) => <a href={item.href} class="flex min-w-max items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted no-underline hover:bg-paper hover:text-ink"><i class={item.icon}></i>{item.label}</a>)}
+        </nav>
+        <div class="mt-6 hidden text-xs leading-6 text-muted lg:block">
+          <p>Internal CMS ringan untuk input tempat, landing page SEO, dan laporan data salah.</p>
+          <a href="/" class="mt-3 inline-block no-underline">← Lihat website</a>
+        </div>
+      </aside>
+      <main class="p-4 sm:p-6 lg:p-8">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import SearchBox from '@/components/listing/SearchBox';
+import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
+import { searchPlaces } from '@/lib/queries/places';
+
+const q = Astro.url.searchParams.get('q') || '';
+const places = await searchPlaces(Astro.locals.supabase, q);
+---
+<BaseLayout title="Cari Tempat" description="Cari tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri." robots="noindex,follow">
+  <Container class="py-10">
+    <header class="max-w-3xl">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Cari tempat</h1>
+      <p class="mt-4 text-muted">Halaman search dibuat untuk user, bukan halaman SEO. Query parameter diset noindex.</p>
+    </header>
+    <div class="mt-8 max-w-2xl">
+      <SearchBox client:load defaultValue={q} />
+    </div>
+    <section class="mt-8">
+      <p class="mb-4 text-sm text-muted">{places.length} hasil {q ? `untuk “${q}”` : 'tersedia'}.</p>
+      <PlaceListingGrid places={places} emptyTitle="Tidak ada hasil" emptyDescription="Coba kata kunci lain seperti WFC, outdoor, murah, atau nama area." />
+    </section>
+  </Container>
+</BaseLayout>

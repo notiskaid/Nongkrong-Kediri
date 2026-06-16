@@ -1,0 +1,21 @@
+---
+type Variant = 'primary' | 'secondary' | 'ghost';
+const { href, variant = 'secondary', class: className = '', icon, type = 'button' } = Astro.props as {
+  href?: string;
+  variant?: Variant;
+  class?: string;
+  icon?: string;
+  type?: 'button' | 'submit' | 'reset';
+};
+const variants = {
+  primary: 'border-ink bg-ink text-paper hover:bg-muted hover:text-paper',
+  secondary: 'border-line bg-surface text-ink hover:border-ink hover:text-ink',
+  ghost: 'border-transparent bg-transparent text-ink hover:bg-surface hover:text-ink'
+};
+const classes = `focus-ring inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium no-underline shadow-soft ${variants[variant]} ${className}`;
+---
+{href ? (
+  <a href={href} class={classes}>{icon && <i class={icon}></i>}<slot /></a>
+) : (
+  <button type={type} class={classes}>{icon && <i class={icon}></i>}<slot /></button>
+)}

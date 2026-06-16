@@ -1,0 +1,16 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import SeoPageForm from '@/components/admin/SeoPageForm';
+import { getSeoPageByIdForAdmin } from '@/lib/queries/seo-pages';
+const id = Astro.params.id!;
+const page = await getSeoPageByIdForAdmin(Astro.locals.supabase, id);
+if (!page) Astro.response.status = 404;
+---
+<AdminLayout title={page ? `Edit ${page.h1}` : 'SEO page tidak ditemukan'}>
+  {page ? (
+    <>
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4"><div><h1 class="text-3xl font-bold">Edit SEO page</h1><p class="mt-2 text-sm text-muted">/{page.slug}/</p></div><a href={`/${page.slug}/`} class="rounded-xl border border-line bg-surface px-4 py-2 text-sm no-underline">Preview</a></div>
+      <SeoPageForm client:load page={page} />
+    </>
+  ) : <div class="rounded-2xl border border-line bg-surface p-6">SEO page tidak ditemukan.</div>}
+</AdminLayout>

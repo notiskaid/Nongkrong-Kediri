@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-paper: 248 248 246;
+  --color-surface: 255 255 255;
+  --color-ink: 31 31 31;
+  --color-muted: 102 102 102;
+  --color-line: 222 222 222;
+  color-scheme: light;
+}
+
+:root.dark {
+  --color-paper: 17 17 17;
+  --color-surface: 24 24 24;
+  --color-ink: 242 242 242;
+  --color-muted: 163 163 163;
+  --color-line: 45 45 45;
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper font-mono text-ink antialiased;
+}
+
+a {
+  @apply underline-offset-4 transition-colors;
+}
+
+a:hover {
+  @apply text-muted;
+}
+
+::selection {
+  background: rgb(var(--color-ink));
+  color: rgb(var(--color-paper));
+}
+
+.prose-nk {
+  @apply prose prose-neutral max-w-none prose-headings:font-mono prose-headings:text-ink prose-p:text-ink prose-a:text-ink prose-strong:text-ink prose-li:text-ink dark:prose-invert;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+}
+
+.card-hover {
+  @apply transition duration-200 hover:-translate-y-0.5 hover:border-ink;
+}
+
+.nk-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.nk-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-line));
+  border-radius: 999px;
+}

@@ -1,0 +1,10 @@
+---
+import type { TaxonomyTerm } from '@/types/taxonomy';
+const { areas = [] } = Astro.props as { areas: TaxonomyTerm[] };
+---
+<section class="rounded-2xl border border-line bg-surface p-5">
+  <h2 class="text-2xl font-semibold">Area populer</h2>
+  <div class="mt-4 flex flex-wrap gap-2">
+    {areas.map((area) => <a href={`/area/${area.slug}/`} class="rounded-lg border border-line px-3 py-1.5 text-sm no-underline hover:border-ink">{area.name}</a>)}
+  </div>
+</section>

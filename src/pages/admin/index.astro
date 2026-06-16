@@ -1,0 +1,43 @@
+---
+import AdminLayout from '@/components/admin/AdminLayout.astro';
+import StatusBadge from '@/components/admin/StatusBadge.astro';
+import { getAllPlacesForAdmin } from '@/lib/queries/places';
+import { getAllSeoPagesForAdmin } from '@/lib/queries/seo-pages';
+
+const places = await getAllPlacesForAdmin(Astro.locals.supabase);
+const seoPages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
+const publishedPlaces = places.filter((p) => p.status === 'published').length;
+const draftPlaces = places.filter((p) => p.status !== 'published').length;
+---
+<AdminLayout title="Admin Dashboard">
+  <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold">Dashboard</h1>
+      <p class="mt-2 text-sm text-muted">Custom admin ringan untuk editorial directory.</p>
+    </div>
+    <a href="/admin/places/new/" class="rounded-xl border border-ink bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline">Tambah tempat</a>
+  </div>
+  {!Astro.locals.isSupabaseConfigured && (
+    <div class="mb-6 rounded-2xl border border-line bg-surface p-4 text-sm leading-6 text-muted">
+      Supabase belum dikonfigurasi. Website memakai mock data agar bisa preview desain dan flow. Setelah env Supabase diisi, admin akan memakai database asli.
+    </div>
+  )}
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-line bg-surface p-5"><p class="text-sm text-muted">Published places</p><p class="mt-2 text-3xl font-bold">{publishedPlaces}</p></div>
+    <div class="rounded-2xl border border-line bg-surface p-5"><p class="text-sm text-muted">Draft/review</p><p class="mt-2 text-3xl font-bold">{draftPlaces}</p></div>
+    <div class="rounded-2xl border border-line bg-surface p-5"><p class="text-sm text-muted">SEO pages</p><p class="mt-2 text-3xl font-bold">{seoPages.length}</p></div>
+  </div>
+  <section class="mt-8 rounded-2xl border border-line bg-surface p-5">
+    <h2 class="text-xl font-semibold">Tempat terbaru</h2>
+    <div class="mt-4 overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="text-xs text-muted"><tr><th class="py-2">Nama</th><th>Status</th><th>Area</th><th></th></tr></thead>
+        <tbody>
+          {places.slice(0, 8).map((place) => (
+            <tr class="border-t border-line"><td class="py-3 font-semibold">{place.name}</td><td><StatusBadge status={place.status} /></td><td class="text-muted">{place.area_name}</td><td><a href={`/admin/places/${place.id}/edit/`} class="no-underline">edit</a></td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</AdminLayout>

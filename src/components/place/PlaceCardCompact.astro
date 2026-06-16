@@ -1,0 +1,8 @@
+---
+import type { Place } from '@/types/place';
+const { place } = Astro.props as { place: Place };
+---
+<article class="card-hover rounded-2xl border border-line bg-surface p-4">
+  <h3 class="font-semibold"><a href={`/tempat/${place.slug}/`} class="no-underline">{place.name}</a></h3>
+  <p class="mt-1 text-xs text-muted">{place.area_name || 'Kediri'} • {place.use_cases.slice(0, 2).map((t) => t.name).join(', ')}</p>
+</article>

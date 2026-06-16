@@ -1,0 +1,13 @@
+---
+import PlaceCard from '@/components/place/PlaceCard.astro';
+import EmptyState from '@/components/base/EmptyState.astro';
+import type { Place } from '@/types/place';
+const { places = [], emptyTitle, emptyDescription } = Astro.props as { places: Place[]; emptyTitle?: string; emptyDescription?: string };
+---
+{places.length ? (
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {places.map((place) => <PlaceCard place={place} />)}
+  </div>
+) : (
+  <EmptyState title={emptyTitle} description={emptyDescription} />
+)}

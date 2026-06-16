@@ -1,0 +1,9 @@
+---
+const { icon, href, class: className = '' } = Astro.props;
+const base = `inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs text-muted no-underline ${className}`;
+---
+{href ? (
+  <a href={href} class={base}>{icon && <i class={icon}></i>}<slot /></a>
+) : (
+  <span class={base}>{icon && <i class={icon}></i>}<slot /></span>
+)}

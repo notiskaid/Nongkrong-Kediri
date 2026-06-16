@@ -1,0 +1,28 @@
+---
+import Badge from '@/components/base/Badge.astro';
+import Button from '@/components/base/Button.astro';
+import type { Place } from '@/types/place';
+const { place } = Astro.props as { place: Place };
+---
+<section class="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-start">
+  <div>
+    <div class="mb-4 flex flex-wrap gap-2">
+      {place.area_name && <Badge icon="ri-map-pin-line">{place.area_name}</Badge>}
+      {place.rating && <Badge icon="ri-star-line">Rating {place.rating}</Badge>}
+      {place.price_label && <Badge icon="ri-money-dollar-circle-line">{place.price_label}</Badge>}
+    </div>
+    <h1 class="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">{place.name}</h1>
+    {place.excerpt && <p class="mt-5 max-w-2xl text-lg leading-8 text-muted">{place.excerpt}</p>}
+    <div class="mt-6 flex flex-wrap gap-3">
+      {place.google_maps_url && <Button href={place.google_maps_url} variant="primary" icon="ri-map-2-line">Buka Google Maps</Button>}
+      <Button href="#lapor" icon="ri-error-warning-line">Lapor data salah</Button>
+    </div>
+  </div>
+  <div class="overflow-hidden rounded-3xl border border-line bg-surface p-2">
+    {place.featured_image_url ? (
+      <img src={place.featured_image_url} alt={place.featured_image_alt || place.name} class="aspect-[4/3] w-full rounded-2xl object-cover grayscale-[10%]" />
+    ) : (
+      <div class="flex aspect-[4/3] items-center justify-center rounded-2xl bg-paper text-muted">Belum ada foto</div>
+    )}
+  </div>
+</section>

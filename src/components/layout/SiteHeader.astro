@@ -1,0 +1,28 @@
+---
+import { MAIN_NAV, SITE } from '@/lib/constants';
+import ThemeToggle from './ThemeToggle';
+---
+<header class="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <nav class="flex min-w-0 items-center gap-2 text-sm sm:text-base" aria-label="Navigasi utama">
+      <a href="/" class="mr-1 flex items-center gap-2 font-semibold no-underline" aria-label={SITE.name}>
+        <span class="flex size-9 items-center justify-center rounded-xl border border-line bg-surface"><i class="ri-cup-line"></i></span>
+        <span class="hidden sm:inline">nongkrong kediri</span>
+      </a>
+      <span class="hidden text-muted md:inline">•</span>
+      <div class="hidden items-center gap-2 md:flex">
+        {MAIN_NAV.slice(1).map((item, index) => (
+          <>
+            <a href={item.href} class="text-muted no-underline hover:text-ink">{item.label}</a>
+            {index < MAIN_NAV.length - 2 && <span class="text-muted">•</span>}
+          </>
+        ))}
+      </div>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="/search/" class="focus-ring flex size-10 items-center justify-center rounded-xl border border-line bg-surface no-underline" aria-label="Cari tempat"><i class="ri-search-line"></i></a>
+      <ThemeToggle client:load />
+      <a href="/rss.xml" class="focus-ring hidden size-10 items-center justify-center rounded-xl border border-line bg-surface no-underline sm:flex" aria-label="RSS"><i class="ri-rss-line"></i></a>
+    </div>
+  </div>
+</header>

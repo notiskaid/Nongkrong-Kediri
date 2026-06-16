@@ -1,0 +1,38 @@
+---
+import Badge from '@/components/base/Badge.astro';
+import type { Place } from '@/types/place';
+import { formatPriceRange } from '@/lib/utils/format-price';
+import { openingHoursLabel } from '@/lib/utils/opening-hours';
+
+const { place, headingLevel = 2 } = Astro.props as { place: Place; headingLevel?: 2 | 3 };
+const headingClass = 'text-lg font-semibold leading-snug';
+const topFacilities = place.facilities?.slice(0, 3) || [];
+const topUseCases = place.use_cases?.slice(0, 2) || [];
+---
+<article class="card-hover overflow-hidden rounded-2xl border border-line bg-surface shadow-soft">
+  {place.featured_image_url && (
+    <a href={`/tempat/${place.slug}/`} class="block no-underline" aria-label={`Lihat ${place.name}`}>
+      <img src={place.featured_image_url} alt={place.featured_image_alt || place.name} class="h-44 w-full object-cover grayscale-[15%]" loading="lazy" />
+    </a>
+  )}
+  <div class="p-4">
+    <div class="mb-3 flex flex-wrap gap-2">
+      {place.area_name && <Badge icon="ri-map-pin-line">{place.area_name}</Badge>}
+      {place.rating && <Badge icon="ri-star-line">{place.rating}</Badge>}
+    </div>
+    {headingLevel === 3 ? (
+      <h3 class={headingClass}><a href={`/tempat/${place.slug}/`} class="no-underline hover:text-muted">{place.name}</a></h3>
+    ) : (
+      <h2 class={headingClass}><a href={`/tempat/${place.slug}/`} class="no-underline hover:text-muted">{place.name}</a></h2>
+    )}
+    {place.excerpt && <p class="mt-2 line-clamp-3 text-sm leading-6 text-muted">{place.excerpt}</p>}
+    <div class="mt-4 flex flex-wrap gap-2">
+      {topUseCases.map((term) => <Badge icon={term.icon}>{term.name}</Badge>)}
+      {topFacilities.map((term) => <Badge icon={term.icon}>{term.name}</Badge>)}
+    </div>
+    <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted">
+      <span><i class="ri-money-dollar-circle-line"></i> {formatPriceRange(place.price_min, place.price_max, place.price_label)}</span>
+      <span><i class="ri-time-line"></i> {openingHoursLabel(place.opening_hours)}</span>
+    </div>
+  </div>
+</article>

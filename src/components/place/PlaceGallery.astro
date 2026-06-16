@@ -1,0 +1,13 @@
+---
+import type { Place } from '@/types/place';
+const { place } = Astro.props as { place: Place };
+const photos = place.photos || [];
+---
+{photos.length > 1 && (
+  <section>
+    <h2 class="text-xl font-semibold">Galeri</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {photos.map((photo) => <img src={photo.url} alt={photo.alt || place.name} class="aspect-[4/3] rounded-2xl border border-line object-cover" loading="lazy" />)}
+    </div>
+  </section>
+)}

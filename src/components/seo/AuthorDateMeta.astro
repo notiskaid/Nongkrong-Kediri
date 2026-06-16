@@ -1,0 +1,10 @@
+---
+import type { SeoPage } from '@/types/seo-page';
+import { formatDate } from '@/lib/utils/date';
+const { page } = Astro.props as { page: SeoPage };
+---
+<div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted">
+  <span><i class="ri-user-line"></i> {page.author_name || 'Editor Nongkrong Kediri'}</span>
+  <span><i class="ri-calendar-line"></i> Terbit: {formatDate(page.published_at)}</span>
+  <span><i class="ri-refresh-line"></i> Diperbarui: {formatDate(page.last_reviewed_at || page.updated_at)}</span>
+</div>

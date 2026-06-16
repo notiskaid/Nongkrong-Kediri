@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
+import { getAreaBySlug } from '@/lib/queries/taxonomy';
+import { getPlacesByArea } from '@/lib/queries/places';
+import { breadcrumbSchema, itemListSchema } from '@/lib/seo/schema';
+
+const slug = Astro.params.slug!;
+const area = await getAreaBySlug(Astro.locals.supabase, slug);
+const places = area ? await getPlacesByArea(Astro.locals.supabase, slug) : [];
+if (!area) Astro.response.status = 404;
+const pseudoPage = area ? { id: area.slug, slug: `area/${area.slug}`, h1: `Tempat Ngopi di ${area.name}`, title: `Tempat Ngopi di ${area.name}`, page_type: 'area' } as any : null;
+---
+<BaseLayout
+  title={area ? `Tempat Ngopi di ${area.name}` : 'Area tidak ditemukan'}
+  description={area?.description || `Direktori tempat ngopi dan nongkrong di area ${area?.name || 'Kediri'}.`}
+  jsonLd={area ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Area', href: `/area/${area.slug}/` }]), itemListSchema(pseudoPage, places)] : []}
+>
+  <Container class="py-10">
+    {area ? (
+      <>
+        <Breadcrumbs items={[{ label: 'area' }, { label: area.name }]} />
+        <header class="border-b border-line pb-8">
+          <p class="mb-3 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">area</p>
+          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Tempat Ngopi di {area.name}</h1>
+          {area.description && <p class="mt-5 max-w-3xl text-lg leading-8 text-muted">{area.description}</p>}
+        </header>
+        <section class="mt-8">
+          <PlaceListingGrid places={places} emptyTitle="Belum ada tempat di area ini" emptyDescription="Tambahkan tempat lewat admin atau submit tempat." />
+        </section>
+        <section class="prose-nk mt-10 rounded-2xl border border-line bg-surface p-5">
+          <h2>Catatan area {area.name}</h2>
+          <p>Konten area bisa dibuat manual untuk memperkuat konteks lokal, akses, waktu terbaik datang, dan tipe tempat yang dominan di area ini.</p>
+        </section>
+      </>
+    ) : (
+      <div class="rounded-2xl border border-line bg-surface p-8"><h1 class="text-3xl font-bold">Area tidak ditemukan</h1></div>
+    )}
+  </Container>
+</BaseLayout>

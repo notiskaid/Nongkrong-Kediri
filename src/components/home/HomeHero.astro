@@ -1,0 +1,18 @@
+---
+import Button from '@/components/base/Button.astro';
+import SearchBox from '@/components/listing/SearchBox';
+---
+<section class="py-12 sm:py-16">
+  <div class="max-w-4xl">
+    <p class="mb-4 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">Kediri local directory</p>
+    <h1 class="text-5xl font-bold tracking-tight sm:text-7xl">Nongkrong Kediri</h1>
+    <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Temukan tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri sesuai kebutuhanmu. Cari tempat yang nyaman buat nugas, kerja, ngobrol malam, atau sekadar ngopi santai.</p>
+    <div class="mt-8 max-w-2xl">
+      <SearchBox client:load />
+    </div>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <Button href="/tempat-ngopi-kediri/" variant="primary" icon="ri-cup-line">Lihat Tempat Ngopi</Button>
+      <Button href="/wfc-kediri/" icon="ri-macbook-line">WFC Kediri</Button>
+    </div>
+  </div>
+</section>

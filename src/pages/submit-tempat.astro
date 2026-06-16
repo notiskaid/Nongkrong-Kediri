@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+---
+<BaseLayout title="Submit Tempat" description="Kirim rekomendasi tempat ngopi, cafe, atau tempat nongkrong di Kediri." robots="index,follow">
+  <Container class="py-10">
+    <header class="max-w-3xl">
+      <p class="mb-3 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">kontribusi</p>
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Submit tempat nongkrong</h1>
+      <p class="mt-5 text-lg leading-8 text-muted">Kirim cafe, warkop, coffee shop, atau tempat nongkrong yang menurutmu layak masuk Nongkrong Kediri. Data akan masuk antrean review dulu.</p>
+    </header>
+    <form action="/api/submit-place" method="post" class="mt-8 max-w-2xl space-y-4 rounded-2xl border border-line bg-surface p-5">
+      <label class="block text-sm">Nama tempat<input required name="name" class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+      <label class="block text-sm">Alamat<textarea name="address" class="mt-2 min-h-24 w-full rounded-xl border border-line bg-paper px-3 py-2"></textarea></label>
+      <label class="block text-sm">Google Maps URL<input name="google_maps_url" class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+      <label class="block text-sm">Instagram/website<input name="contact_url" class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+      <label class="block text-sm">Catatan<textarea name="notes" class="mt-2 min-h-28 w-full rounded-xl border border-line bg-paper px-3 py-2" placeholder="Cocok untuk WFC? Ada WiFi/colokan? Kisaran harga?"></textarea></label>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block text-sm">Nama pengirim<input name="submitter_name" class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+        <label class="block text-sm">Kontak pengirim<input name="submitter_contact" class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+      </div>
+      <button class="rounded-xl border border-ink bg-ink px-5 py-2 text-sm font-semibold text-paper">Kirim tempat</button>
+    </form>
+  </Container>
+</BaseLayout>

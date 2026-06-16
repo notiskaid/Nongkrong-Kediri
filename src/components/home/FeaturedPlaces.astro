@@ -1,0 +1,15 @@
+---
+import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
+import type { Place } from '@/types/place';
+const { places = [] } = Astro.props as { places: Place[] };
+---
+<section>
+  <div class="mb-4 flex items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-semibold">Tempat pilihan</h2>
+      <p class="mt-2 text-sm text-muted">Card ini otomatis mengambil data Place yang dipublish dan ditandai featured.</p>
+    </div>
+    <a href="/tempat-ngopi-kediri/" class="text-sm no-underline">lihat semua →</a>
+  </div>
+  <PlaceListingGrid places={places} />
+</section>

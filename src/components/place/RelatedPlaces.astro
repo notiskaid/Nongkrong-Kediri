@@ -1,0 +1,13 @@
+---
+import PlaceCardCompact from './PlaceCardCompact.astro';
+import type { Place } from '@/types/place';
+const { places = [] } = Astro.props as { places: Place[] };
+---
+{places.length > 0 && (
+  <section>
+    <h2 class="text-xl font-semibold">Tempat serupa</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      {places.map((place) => <PlaceCardCompact place={place} />)}
+    </div>
+  </section>
+)}

@@ -1,0 +1,14 @@
+---
+import Button from '@/components/base/Button.astro';
+import type { Place } from '@/types/place';
+const { place } = Astro.props as { place: Place };
+---
+<section class="rounded-2xl border border-line bg-surface p-5">
+  <h2 class="text-xl font-semibold">Alamat</h2>
+  <p class="mt-3 text-sm leading-7 text-muted">{place.address || 'Alamat belum tersedia.'}</p>
+  <div class="mt-4 flex flex-wrap gap-3">
+    {place.google_maps_url && <Button href={place.google_maps_url} variant="primary" icon="ri-map-pin-line">Buka Maps</Button>}
+    {place.instagram && <Button href={place.instagram} icon="ri-instagram-line">Instagram</Button>}
+    {place.website && <Button href={place.website} icon="ri-global-line">Website</Button>}
+  </div>
+</section>
