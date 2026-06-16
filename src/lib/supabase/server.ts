@@ -29,7 +29,12 @@ export function getSupabaseServer(context: Pick<APIContext, 'cookies' | 'locals'
       },
       setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
         cookiesToSet.forEach(({ name, value, options }) => {
-          context.cookies.set(name, value, options);
+          context.cookies.set(name, value, {
+            ...options,
+            path: '/',
+            sameSite: options?.sameSite || 'lax',
+            secure: options?.secure ?? import.meta.env.PROD
+          });
         });
       }
     }
