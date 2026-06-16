@@ -22,7 +22,8 @@ const pageTitle = titleTemplate(title);
 const pageDescription = truncateDescription(description);
 const runtimeSiteUrl = Astro.locals.runtime?.env?.PUBLIC_SITE_URL;
 const pageCanonical = canonical || canonicalUrl(Astro.url.pathname, null, runtimeSiteUrl);
-const pageImage = image || `${runtimeSiteUrl || siteUrl()}/og-default.svg`;
+const ogParams = new URLSearchParams({ title: String(title || 'Nongkrong Kediri'), description: pageDescription });
+const pageImage = image || `${runtimeSiteUrl || siteUrl()}/api/og?${ogParams.toString()}`;
 const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter(Boolean);
 ---
 <!doctype html>

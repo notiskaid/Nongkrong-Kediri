@@ -17,12 +17,14 @@ export const GET: APIRoute = async ({ locals }) => {
     getAreas(locals.supabase)
   ]);
 
+  const today = new Date().toISOString();
   const urls = [
-    url('/'),
-    url('/submit-tempat/'),
+    url('/', today),
+    url('/tentang/', today),
+    url('/submit-tempat/', today),
     ...pages.map((page) => url(`/${page.slug}/`, page.last_reviewed_at || page.updated_at || page.published_at)),
     ...places.map((place) => url(`/tempat/${place.slug}/`, place.last_reviewed_at || place.updated_at || place.published_at)),
-    ...areas.map((area) => url(`/area/${area.slug}/`))
+    ...areas.map((area: any) => url(`/area/${area.slug}/`, area.updated_at || area.created_at || today))
   ];
 
   return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`, {
