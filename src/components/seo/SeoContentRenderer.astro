@@ -1,13 +1,14 @@
 ---
 import FaqBlock from './FaqBlock.astro';
 import type { SeoContentBlock } from '@/types/seo-page';
+import { renderSafeMarkdown } from '@/lib/utils/markdown';
 const { blocks = [] } = Astro.props as { blocks?: SeoContentBlock[] | null };
 ---
 {blocks?.length ? (
   <div class="space-y-8">
     {blocks.map((block) => (
       <>
-        {block.type === 'markdown' && <div class="prose-nk whitespace-pre-line">{block.content}</div>}
+        {block.type === 'markdown' && <div class="prose-nk" set:html={renderSafeMarkdown(block.content)} />}
         {block.type === 'faq' && <FaqBlock items={block.items} />}
         {block.type === 'internal_links' && (
           <section class="rounded-2xl border border-line bg-surface p-5">

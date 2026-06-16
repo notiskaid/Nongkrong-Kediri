@@ -1,15 +1,23 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
 import StatusBadge from '@/components/admin/StatusBadge.astro';
+import type { SeoPage } from '@/types/seo-page';
 import { getAllSeoPagesForAdmin } from '@/lib/queries/seo-pages';
-const pages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
+let pages: SeoPage[] = [];
+let errorMessage = '';
+try {
+  pages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
+} catch (error) {
+  errorMessage = error instanceof Error ? error.message : 'Gagal mengambil data halaman SEO.';
+}
 ---
 <AdminLayout title="Admin SEO Pages">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-    <div><h1 class="text-3xl font-bold">SEO Pages</h1><p class="mt-2 text-sm text-muted">Landing page keyword berbasis query_config.</p></div>
+    <div><h1 class="text-3xl font-bold">SEO Pages</h1><p class="mt-2 text-sm text-muted">Kelola halaman keyword dan rekomendasi tempat yang tampil di website.</p></div>
     <a href="/admin/seo-pages/new/" class="rounded-xl border border-ink bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline">Tambah SEO page</a>
   </div>
-  <div class="overflow-hidden rounded-2xl border border-line bg-surface">
+  {errorMessage && <div class="mb-5 rounded-2xl border border-line bg-surface p-5 text-sm text-muted">{errorMessage}</div>}
+  {!errorMessage && <div class="overflow-hidden rounded-2xl border border-line bg-surface">
     <table class="w-full text-left text-sm">
       <thead class="border-b border-line text-xs text-muted"><tr><th class="p-3">H1</th><th class="p-3">Slug</th><th class="p-3">Status</th><th class="p-3"></th></tr></thead>
       <tbody>
@@ -23,5 +31,5 @@ const pages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
         ))}
       </tbody>
     </table>
-  </div>
+  </div>}
 </AdminLayout>

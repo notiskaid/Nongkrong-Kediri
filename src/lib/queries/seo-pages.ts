@@ -40,10 +40,10 @@ export async function getAllSeoPagesForAdmin(supabase?: SupabaseClient | null): 
   if (!supabase) return mockSeoPages;
   try {
     const { data, error } = await withTimeout(supabase.from('seo_pages_public').select('*').order('updated_at', { ascending: false }));
-    if (error || !data) return mockSeoPages;
+    if (error || !data) throw error || new Error('Gagal mengambil data halaman SEO.');
     return data.map(normalizeSeoPage);
   } catch {
-    return mockSeoPages;
+    throw new Error('Gagal mengambil data halaman SEO.');
   }
 }
 
@@ -63,9 +63,10 @@ export async function getSeoPageByIdForAdmin(supabase: SupabaseClient | null | u
   if (!supabase) return mockSeoPages.find((page) => page.id === id) || null;
   try {
     const { data, error } = await withTimeout(supabase.from('seo_pages_public').select('*').eq('id', id).maybeSingle());
-    if (error || !data) return mockSeoPages.find((page) => page.id === id) || null;
+    if (error) throw error;
+    if (!data) return null;
     return normalizeSeoPage(data);
   } catch {
-    return mockSeoPages.find((page) => page.id === id) || null;
+    throw new Error('Gagal mengambil data halaman SEO.');
   }
 }

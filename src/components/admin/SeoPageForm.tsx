@@ -4,7 +4,7 @@ import { slugify } from '@/lib/utils/slug';
 type SeoPage = any;
 
 const defaultContent = JSON.stringify([
-  { type: 'markdown', content: '## Konten manual\n\nTulis konten bebas di sini.' }
+  { type: 'markdown', content: '## Panduan singkat\n\nTulis catatan lokal, tips jam terbaik datang, dan hal yang perlu diperhatikan pengunjung.' }
 ], null, 2);
 
 const defaultQueryConfig = JSON.stringify({ categories: ['cafe', 'coffee-shop'], sort: 'featured_first' }, null, 2);
@@ -28,7 +28,7 @@ export default function SeoPageForm({ page }: { page?: SeoPage }) {
       query_config = JSON.parse(String(form.get('query_config') || '{}'));
     } catch {
       setStatus('error');
-      setMessage('Content atau query_config bukan JSON valid.');
+      setMessage('Konten atau pengaturan listing belum memakai format JSON yang valid.');
       return;
     }
 
@@ -81,11 +81,11 @@ export default function SeoPageForm({ page }: { page?: SeoPage }) {
       </div>
       <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">
         <h2 className="font-semibold">Query config</h2>
-        <p className="text-xs leading-6 text-muted">JSON ini menentukan listing Place yang otomatis muncul di halaman keyword.</p>
+        <p className="text-xs leading-6 text-muted">Atur kategori, area, fasilitas, atau kebutuhan pengunjung yang ingin ditampilkan di halaman ini.</p>
         <textarea name="query_config" defaultValue={JSON.stringify(page?.query_config || JSON.parse(defaultQueryConfig), null, 2)} className="min-h-44 w-full rounded-xl border border-line bg-paper px-3 py-2 font-mono text-sm" />
       </div>
       <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">
-        <h2 className="font-semibold">Konten manual bawah listing</h2>
+        <h2 className="font-semibold">Konten bawah listing</h2>
         <textarea name="content" defaultValue={JSON.stringify(page?.content || JSON.parse(defaultContent), null, 2)} className="min-h-72 w-full rounded-xl border border-line bg-paper px-3 py-2 font-mono text-sm" />
       </div>
       <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">

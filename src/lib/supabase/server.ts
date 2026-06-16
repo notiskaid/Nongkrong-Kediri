@@ -46,7 +46,7 @@ export function adminEmails(context?: Pick<APIContext, 'locals'>) {
 export async function ensureAdmin(context: APIContext) {
   const supabase = getSupabaseServer(context);
   if (!supabase) {
-    return { ok: false as const, response: new Response(JSON.stringify({ error: 'Supabase belum dikonfigurasi.' }), { status: 503 }) };
+    return { ok: false as const, response: new Response(JSON.stringify({ error: 'Database belum tersambung.' }), { status: 503 }) };
   }
 
   const { data, error } = await supabase.auth.getUser();

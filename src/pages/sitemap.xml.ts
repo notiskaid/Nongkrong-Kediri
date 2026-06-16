@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
-import { SITE } from '@/lib/constants';
+import { siteUrl } from '@/lib/constants';
 import { getPublishedPlaces } from '@/lib/queries/places';
 import { getPublishedSeoPages } from '@/lib/queries/seo-pages';
 import { getAreas } from '@/lib/queries/taxonomy';
 
 function url(path: string, lastmod?: string | null) {
-  const loc = `${SITE.url.replace(/\/$/, '')}${path}`;
+  const base = siteUrl();
+  const loc = `${base}${path}`;
   return `<url><loc>${loc}</loc>${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ''}</url>`;
 }
 

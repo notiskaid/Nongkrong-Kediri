@@ -37,7 +37,7 @@ function cleanPayload(payload: SeoPagePayload) {
 function validatePayload(payload: SeoPagePayload) {
   if (!payload.title?.trim()) throw new Error('Title wajib diisi.');
   if (payload.content != null && !Array.isArray(payload.content)) throw new Error('Content harus array JSON.');
-  if (payload.query_config != null && (typeof payload.query_config !== 'object' || Array.isArray(payload.query_config))) throw new Error('Query config harus object JSON.');
+  if (payload.query_config != null && (typeof payload.query_config !== 'object' || Array.isArray(payload.query_config))) throw new Error('Pengaturan listing harus berupa object JSON.');
 }
 
 function withPublishedAt(payload: SeoPagePayload, existingPublishedAt?: string | null) {

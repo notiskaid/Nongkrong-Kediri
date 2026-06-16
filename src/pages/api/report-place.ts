@@ -14,7 +14,7 @@ export const POST: APIRoute = async (context) => {
   if (!placeId || !reportTypes.has(reportType)) return new Response(JSON.stringify({ error: 'Laporan tidak valid.' }), { status: 400 });
 
   const supabase = getSupabaseServer(context);
-  if (!supabase) return new Response(JSON.stringify({ ok: true, demo: true }), { status: 200 });
+  if (!supabase) return new Response(JSON.stringify({ ok: true }), { status: 200 });
 
   const { error } = await supabase.from('place_reports').insert({
     place_id: placeId,

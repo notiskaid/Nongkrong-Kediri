@@ -42,11 +42,11 @@ const img = (seed: string) => `https://images.unsplash.com/photo-${seed}?auto=fo
 export const mockPlaces: Place[] = [
   {
     id: 'place-1',
-    slug: 'kedai-kopi-mockup-mojoroto',
-    name: 'Kedai Kopi Mockup Mojoroto',
+    slug: 'kedai-kopi-mojoroto',
+    name: 'Kedai Kopi Mojoroto',
     excerpt: 'Coffee shop minimal di Mojoroto yang cocok untuk WFC dan nugas singkat.',
     description:
-      'Kedai Kopi Mockup Mojoroto adalah data contoh untuk melihat bagaimana halaman detail tempat bekerja. Ganti dengan data cafe asli saat Supabase sudah disiapkan.',
+      'Kedai kopi di area Mojoroto dengan suasana santai untuk ngopi sore, laptopan ringan, atau janjian dengan teman.',
     editorial_notes:
       'Catatan editorial: nyaman untuk laptopan di jam siang, meja tidak terlalu besar, dan suasana lebih ramai saat malam minggu.',
     address: 'Jl. Contoh Mojoroto No. 12, Kediri',
@@ -84,7 +84,7 @@ export const mockPlaces: Place[] = [
     name: 'Teras Ngopi Kota Kediri',
     excerpt: 'Tempat nongkrong outdoor dekat pusat kota, enak untuk ngobrol sore sampai malam.',
     description:
-      'Teras Ngopi Kota Kediri adalah contoh tempat outdoor. Gunakan halaman ini sebagai referensi card, fasilitas, dan internal linking.',
+      'Teras Ngopi Kota Kediri menawarkan area outdoor yang enak untuk ngobrol sore sampai malam di sekitar pusat kota.',
     editorial_notes:
       'Catatan editorial: lebih cocok untuk nongkrong daripada WFC karena area outdoor cenderung ramai dan musik kadang cukup terdengar.',
     address: 'Jl. Contoh Pusat Kota No. 8, Kediri',
@@ -114,11 +114,11 @@ export const mockPlaces: Place[] = [
   },
   {
     id: 'place-3',
-    slug: 'warkop-24-jam-kediri-demo',
-    name: 'Warkop 24 Jam Kediri Demo',
-    excerpt: 'Warkop contoh untuk halaman cafe 24 jam, nongkrong malam, dan tempat murah.',
+    slug: 'warkop-24-jam-kediri',
+    name: 'Warkop 24 Jam Kediri',
+    excerpt: 'Warkop untuk nongkrong malam, nugas ringan, dan ngopi murah kapan saja.',
     description:
-      'Warkop 24 Jam Kediri Demo adalah data contoh untuk menguji halaman keyword 24 jam dan nongkrong malam.',
+      'Warkop 24 jam di Kediri untuk nongkrong malam, nugas dadakan, atau cari kopi sederhana setelah jam ramai.',
     editorial_notes:
       'Catatan editorial: cocok untuk ngobrol malam dan nugas ringan, tapi bukan pilihan utama untuk meeting formal.',
     address: 'Jl. Contoh Pesantren No. 17, Kediri',
@@ -165,7 +165,7 @@ export const mockSeoPages: SeoPage[] = [
     meta_title: 'Tempat Ngopi Kediri: Cafe, Coffee Shop, dan Warkop Pilihan',
     meta_description: 'Cari tempat ngopi di Kediri? Lihat rekomendasi cafe, coffee shop, dan warkop dengan info area, fasilitas, harga, dan jam buka.',
     content: [
-      { type: 'markdown', content: '## Catatan kurasi\n\nHalaman ini disiapkan untuk konten manual bebas. Listing di atas otomatis diambil dari database Place sesuai kategori.' },
+      { type: 'markdown', content: '## Cara memilih tempat ngopi\n\nPilih tempat yang sesuai dengan tujuan datang: ngobrol santai, kerja sebentar, atau sekadar mencari suasana baru. Perhatikan area, jam buka, fasilitas, dan kisaran harga sebelum berangkat.' },
       { type: 'internal_links', title: 'Lihat juga', links: [{ label: 'WFC Kediri', href: '/wfc-kediri/' }, { label: 'Cafe 24 Jam Kediri', href: '/cafe-24-jam-kediri/' }] }
     ]
   },
@@ -182,7 +182,7 @@ export const mockSeoPages: SeoPage[] = [
     status: 'published',
     published_at: '2026-01-01T08:00:00.000Z',
     last_reviewed_at: '2026-06-01T08:00:00.000Z',
-    content: [{ type: 'markdown', content: '## Konten manual\n\nTambahkan opini lokal, tips jam datang, dan konteks area agar halaman ini tidak terasa seperti template.' }]
+    content: [{ type: 'markdown', content: '## Rekomendasi nongkrong\n\nUntuk nongkrong santai, cari tempat dengan kursi nyaman, suasana tidak terlalu bising, dan akses pulang yang mudah terutama kalau datang malam.' }]
   },
   {
     id: 'seo-3',
@@ -215,7 +215,7 @@ export const mockSeoPages: SeoPage[] = [
     status: 'published',
     published_at: '2026-01-05T08:00:00.000Z',
     last_reviewed_at: '2026-06-01T08:00:00.000Z',
-    content: [{ type: 'markdown', content: 'Konten bawah listing bisa kamu isi sendiri sesuai strategi SEO dan observasi lokal.' }]
+    content: [{ type: 'markdown', content: 'Cafe buat nugas idealnya punya WiFi stabil, meja cukup luas, pencahayaan nyaman, dan suasana yang tidak terlalu ramai.' }]
   },
   {
     id: 'seo-5',
@@ -245,7 +245,7 @@ export const mockSeoPages: SeoPage[] = [
     status: 'published',
     published_at: '2026-01-07T08:00:00.000Z',
     last_reviewed_at: '2026-06-01T08:00:00.000Z',
-    content: [{ type: 'markdown', content: 'Tambahkan range harga aktual dan menu murah yang paling relevan saat data asli sudah masuk.' }]
+    content: [{ type: 'markdown', content: 'Tempat ngopi murah cocok untuk kunjungan singkat, nugas ringan, atau nongkrong santai tanpa banyak pertimbangan biaya.' }]
   },
   {
     id: 'seo-7',

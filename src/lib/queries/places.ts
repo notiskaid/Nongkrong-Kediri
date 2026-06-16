@@ -98,10 +98,10 @@ export async function getAllPlacesForAdmin(supabase?: SupabaseClient | null): Pr
       .select('*')
       .order('updated_at', { ascending: false }));
 
-    if (error || !data) return mockPlaces;
+    if (error || !data) throw error || new Error('Gagal mengambil data tempat.');
     return data.map(normalizePlace);
   } catch {
-    return mockPlaces;
+    throw new Error('Gagal mengambil data tempat.');
   }
 }
 
@@ -123,10 +123,11 @@ export async function getPlaceByIdForAdmin(supabase: SupabaseClient | null | und
 
   try {
     const { data, error } = await withTimeout(supabase.from('places_public').select('*').eq('id', id).maybeSingle());
-    if (error || !data) return mockPlaces.find((place) => place.id === id) || null;
+    if (error) throw error;
+    if (!data) return null;
     return normalizePlace(data);
   } catch {
-    return mockPlaces.find((place) => place.id === id) || null;
+    throw new Error('Gagal mengambil data tempat.');
   }
 }
 

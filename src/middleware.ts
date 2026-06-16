@@ -22,6 +22,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isAdminRoute = path === '/admin' || path.startsWith('/admin/');
   const isLoginRoute = path === '/admin/login' || path === '/admin/login/';
 
+  if (!isSupabaseConfigured(context) && isAdminRoute && import.meta.env.PROD) {
+    return new Response('Admin belum tersedia. Konfigurasi database perlu dilengkapi.', { status: 503 });
+  }
+
   if (isSupabaseConfigured(context) && isAdminRoute && !isLoginRoute && !context.locals.isAdmin) {
     return context.redirect('/admin/login/');
   }

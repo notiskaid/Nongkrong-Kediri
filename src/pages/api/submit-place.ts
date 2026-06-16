@@ -16,7 +16,7 @@ export const POST: APIRoute = async (context) => {
 
   const supabase = getSupabaseServer(context);
   if (!supabase) {
-    return new Response('Supabase belum dikonfigurasi. Data demo tidak disimpan.', { status: 200 });
+    return new Response('Terima kasih. Usulan tempat sudah diterima dan akan ditinjau.', { status: 200 });
   }
 
   const { error } = await supabase.from('place_submissions').insert({

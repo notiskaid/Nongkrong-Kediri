@@ -1,6 +1,6 @@
 import type { Place } from '@/types/place';
 import type { SeoPage } from '@/types/seo-page';
-import { SITE } from '@/lib/constants';
+import { siteUrl } from '@/lib/constants';
 import { canonicalUrl } from './canonical';
 
 export function breadcrumbSchema(items: { name: string; href: string }[]) {
@@ -56,15 +56,16 @@ export function itemListSchema(page: SeoPage, places: Place[]) {
 }
 
 export function websiteSchema() {
+  const url = siteUrl();
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: SITE.name,
-    url: SITE.url,
-    description: SITE.description,
+    name: 'Nongkrong Kediri',
+    url,
+    description: 'Panduan lokal untuk menemukan tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri berdasarkan area, suasana, fasilitas, dan kebutuhan.',
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE.url.replace(/\/$/, '')}/search/?q={search_term_string}`,
+      target: `${url}/search/?q={search_term_string}`,
       'query-input': 'required name=search_term_string'
     }
   };

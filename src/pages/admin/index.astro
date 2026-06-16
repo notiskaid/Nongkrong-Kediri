@@ -1,11 +1,22 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
 import StatusBadge from '@/components/admin/StatusBadge.astro';
+import type { Place } from '@/types/place';
+import type { SeoPage } from '@/types/seo-page';
 import { getAllPlacesForAdmin } from '@/lib/queries/places';
 import { getAllSeoPagesForAdmin } from '@/lib/queries/seo-pages';
 
-const places = await getAllPlacesForAdmin(Astro.locals.supabase);
-const seoPages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
+let places: Place[] = [];
+let seoPages: SeoPage[] = [];
+let errorMessage = '';
+try {
+  [places, seoPages] = await Promise.all([
+    getAllPlacesForAdmin(Astro.locals.supabase),
+    getAllSeoPagesForAdmin(Astro.locals.supabase)
+  ]);
+} catch (error) {
+  errorMessage = error instanceof Error ? error.message : 'Gagal mengambil data dashboard.';
+}
 const publishedPlaces = places.filter((p) => p.status === 'published').length;
 const draftPlaces = places.filter((p) => p.status !== 'published').length;
 ---
@@ -19,9 +30,10 @@ const draftPlaces = places.filter((p) => p.status !== 'published').length;
   </div>
   {!Astro.locals.isSupabaseConfigured && (
     <div class="mb-6 rounded-2xl border border-line bg-surface p-4 text-sm leading-6 text-muted">
-      Supabase belum dikonfigurasi. Website memakai mock data agar bisa preview desain dan flow. Setelah env Supabase diisi, admin akan memakai database asli.
+      Database belum tersambung. Beberapa data mungkin belum bisa disimpan sampai konfigurasi selesai.
     </div>
   )}
+  {errorMessage && <div class="mb-6 rounded-2xl border border-line bg-surface p-5 text-sm text-muted">{errorMessage}</div>}
   <div class="grid gap-4 sm:grid-cols-3">
     <div class="rounded-2xl border border-line bg-surface p-5"><p class="text-sm text-muted">Published places</p><p class="mt-2 text-3xl font-bold">{publishedPlaces}</p></div>
     <div class="rounded-2xl border border-line bg-surface p-5"><p class="text-sm text-muted">Draft/review</p><p class="mt-2 text-3xl font-bold">{draftPlaces}</p></div>

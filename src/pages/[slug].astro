@@ -55,7 +55,7 @@ const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-muted">{places.length} tempat ditemukan.</p>
           </div>
-          <PlaceListingGrid places={places} emptyTitle="Belum ada tempat" emptyDescription="Tempat akan muncul otomatis saat data Place cocok dengan query_config halaman ini." />
+          <PlaceListingGrid places={places} emptyTitle="Belum ada tempat" emptyDescription="Rekomendasi akan bertambah setelah data tempat yang sesuai tersedia." />
         </section>
         <section class="mt-10">
           <SeoContentRenderer blocks={page.content} />

@@ -11,7 +11,9 @@ export const SITE = {
 };
 
 export function siteUrl(runtimeUrl?: string | null) {
-  return (runtimeUrl || SITE.url).replace(/\/$/, '');
+  const raw = (runtimeUrl || SITE.url).replace(/\/$/, '');
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `https://${raw}`;
 }
 
 export const MAIN_NAV = [
