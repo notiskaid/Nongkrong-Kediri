@@ -8,26 +8,42 @@ import AdminLayout from '@/components/admin/AdminLayout.astro';
     <form id="login-form" class="mt-6 space-y-4">
       <label class="block text-sm">Email<input name="email" type="email" required class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
       <label class="block text-sm">Password<input name="password" type="password" required class="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
-      <button class="rounded-xl border border-ink bg-ink px-5 py-2 text-sm font-semibold text-paper">Login</button>
+      <button id="login-button" type="submit" class="rounded-xl border border-ink bg-ink px-5 py-2 text-sm font-semibold text-paper disabled:cursor-not-allowed disabled:opacity-60">Login</button>
       <p id="login-message" class="text-sm text-muted"></p>
     </form>
   </div>
   <script>
     const form = document.querySelector<HTMLFormElement>('#login-form');
     const msg = document.querySelector<HTMLParagraphElement>('#login-message');
+    const button = document.querySelector<HTMLButtonElement>('#login-button');
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Login...';
+      }
+      if (msg) msg.textContent = '';
       const formData = new FormData(form);
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(formData.entries()))
-      });
-      if (response.ok) {
-        window.location.href = '/admin/';
-      } else {
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(formData.entries()))
+        });
         const data = await response.json().catch(() => ({})) as { error?: string };
+        if (response.ok) {
+          window.location.assign('/admin/');
+          return;
+        }
         if (msg) msg.textContent = data.error || 'Gagal login.';
+      } catch {
+        if (msg) msg.textContent = 'Koneksi gagal. Coba lagi.';
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = 'Login';
+        }
       }
     });
   </script>
