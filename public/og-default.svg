@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f8f8f6"/>
+  <rect x="64" y="64" width="1072" height="502" rx="42" fill="#ffffff" stroke="#1f1f1f" stroke-width="3"/>
+  <circle cx="988" cy="168" r="76" fill="#1f1f1f"/>
+  <path d="M953 164h70v14c0 30-24 54-54 54h-16v-68Z" fill="#f8f8f6"/>
+  <path d="M1023 179h20c13 0 24 11 24 24s-11 24-24 24h-20" fill="none" stroke="#f8f8f6" stroke-width="14"/>
+  <text x="104" y="180" fill="#666666" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="28" letter-spacing="4">PANDUAN LOKAL</text>
+  <text x="104" y="304" fill="#1f1f1f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="84" font-weight="700">Nongkrong Kediri</text>
+  <text x="104" y="386" fill="#1f1f1f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="42">Cafe • WFC • Tempat Ngopi • Area</text>
+  <text x="104" y="474" fill="#666666" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30">Temukan tempat yang pas sebelum berangkat.</text>
+</svg>

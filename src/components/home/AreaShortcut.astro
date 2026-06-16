@@ -2,9 +2,13 @@
 import type { TaxonomyTerm } from '@/types/taxonomy';
 const { areas = [] } = Astro.props as { areas: TaxonomyTerm[] };
 ---
-<section class="rounded-2xl border border-line bg-surface p-5">
-  <h2 class="text-2xl font-semibold">Area populer</h2>
-  <div class="mt-4 flex flex-wrap gap-2">
-    {areas.map((area) => <a href={`/area/${area.slug}/`} class="rounded-lg border border-line px-3 py-1.5 text-sm no-underline hover:border-ink">{area.name}</a>)}
+<section class="rounded-[2rem] border border-line bg-surface p-6">
+  <div class="max-w-2xl">
+    <p class="text-xs uppercase tracking-[0.25em] text-muted">Peta rasa lokal</p>
+    <h2 class="mt-2 text-3xl font-semibold">Cari dari area yang kamu kenal</h2>
+    <p class="mt-2 text-sm leading-6 text-muted">Mulai dari pusat kota, sekitar kampus, sisi timur, sampai titik transit seperti stasiun.</p>
+  </div>
+  <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {areas.map((area) => <a href={`/area/${area.slug}/`} class="card-hover rounded-2xl border border-line bg-paper p-4 no-underline"><span class="text-xs text-muted">area</span><p class="mt-2 font-semibold">{area.name}</p>{area.description && <p class="mt-2 line-clamp-2 text-xs leading-5 text-muted">{area.description}</p>}</a>)}
   </div>
 </section>

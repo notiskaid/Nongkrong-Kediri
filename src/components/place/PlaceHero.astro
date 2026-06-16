@@ -11,16 +11,21 @@ const { place } = Astro.props as { place: Place };
       {place.rating && <Badge icon="ri-star-line">Rating {place.rating}</Badge>}
       {place.price_label && <Badge icon="ri-money-dollar-circle-line">{place.price_label}</Badge>}
     </div>
-    <h1 class="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">{place.name}</h1>
+    <h1 class="max-w-4xl text-4xl font-bold tracking-tight sm:text-6xl">{place.name}</h1>
     {place.excerpt && <p class="mt-5 max-w-2xl text-lg leading-8 text-muted">{place.excerpt}</p>}
+    <div class="mt-6 grid gap-3 sm:grid-cols-3">
+      <div class="rounded-2xl border border-line bg-surface p-4"><p class="text-xs text-muted">Area</p><p class="mt-1 font-semibold">{place.area_name || 'Kediri'}</p></div>
+      <div class="rounded-2xl border border-line bg-surface p-4"><p class="text-xs text-muted">Kisaran harga</p><p class="mt-1 font-semibold">{place.price_label || 'Belum dicatat'}</p></div>
+      <div class="rounded-2xl border border-line bg-surface p-4"><p class="text-xs text-muted">Cocok untuk</p><p class="mt-1 line-clamp-1 font-semibold">{place.use_cases?.[0]?.name || 'Nongkrong'}</p></div>
+    </div>
     <div class="mt-6 flex flex-wrap gap-3">
       {place.google_maps_url && <Button href={place.google_maps_url} variant="primary" icon="ri-map-2-line">Buka Google Maps</Button>}
       <Button href="#lapor" icon="ri-error-warning-line">Lapor data salah</Button>
     </div>
   </div>
-  <div class="overflow-hidden rounded-3xl border border-line bg-surface p-2">
+  <div class="overflow-hidden rounded-[2rem] border border-line bg-surface p-2 shadow-soft">
     {place.featured_image_url ? (
-      <img src={place.featured_image_url} alt={place.featured_image_alt || place.name} class="aspect-[4/3] w-full rounded-2xl object-cover grayscale-[10%]" />
+      <img src={place.featured_image_url} alt={place.featured_image_alt || place.name} class="aspect-[4/3] w-full rounded-[1.5rem] object-cover" />
     ) : (
       <div class="flex aspect-[4/3] items-center justify-center rounded-2xl bg-paper text-muted">Belum ada foto</div>
     )}

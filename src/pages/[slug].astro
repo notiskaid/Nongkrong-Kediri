@@ -15,7 +15,7 @@ import { getAreas } from '@/lib/queries/taxonomy';
 import { SITE } from '@/lib/constants';
 import { getPublishedPlaces, filterPlacesByConfig } from '@/lib/queries/places';
 import { getPublishedSeoPages, getSeoPageBySlug } from '@/lib/queries/seo-pages';
-import { breadcrumbSchema, itemListSchema, websiteSchema } from '@/lib/seo/schema';
+import { breadcrumbSchema, collectionPageSchema, faqSchema, itemListSchema, websiteSchema } from '@/lib/seo/schema';
 
 const slug = String(Astro.params.slug || '').replace(/^\/+|\/+$/g, '');
 const isHomeFallback = !slug;
@@ -28,12 +28,17 @@ const relatedPages = allSeoPages.filter((item) => item.slug !== page?.slug).slic
 const featuredPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { is_featured: true, sort: 'featured_first', limit: 6 }) : [];
 const wfcPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], facilities: ['wifi', 'colokan'], limit: 3, sort: 'featured_first' }) : [];
 const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
+const landingFaq = [
+  { question: 'Apa halaman ini selalu update?', answer: 'Data tempat diperbarui dari admin editorial. Kalau ada info berubah, gunakan tombol laporan di halaman tempat.' },
+  { question: 'Bagaimana urutan rekomendasi dibuat?', answer: 'Urutan mempertimbangkan status publish, pilihan editorial, kebutuhan pencarian, dan kelengkapan data tempat.' },
+  { question: 'Apakah semua tempat sudah pernah dikunjungi?', answer: 'Beberapa tempat dikurasi dari data publik dan laporan lokal. Detail bisa berubah, jadi cek ulang sebelum berangkat.' }
+];
 ---
 <SeoPageLayout
   title={isHomeFallback ? 'Nongkrong Kediri' : page?.meta_title || page?.title || 'Halaman tidak ditemukan'}
   description={isHomeFallback ? SITE.description : page?.meta_description || page?.description || 'Halaman tidak ditemukan.'}
   robots={page?.robots || 'index,follow'}
-  jsonLd={isHomeFallback ? [websiteSchema()] : page ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: page.h1, href: `/${page.slug}/` }]), itemListSchema(page, places)] : []}
+  jsonLd={isHomeFallback ? [websiteSchema()] : page ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: page.h1, href: `/${page.slug}/` }]), collectionPageSchema(page), itemListSchema(page, places), faqSchema(landingFaq)] : []}
 >
   {isHomeFallback ? (
     <Container>
@@ -51,6 +56,22 @@ const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
       <>
         <Breadcrumbs items={[{ label: page.h1 }]} />
         <SeoPageHeader page={page} />
+        <section class="mt-8 grid gap-4 rounded-[1.75rem] border border-line bg-surface p-6 lg:grid-cols-[1fr_.8fr]">
+          <div class="prose-nk">
+            <h2>Panduan singkat sebelum memilih</h2>
+            <p>{page.description || `Halaman ini membantu kamu menyaring tempat yang relevan untuk ${page.h1.toLowerCase()} berdasarkan area, fasilitas, suasana, dan kebutuhan datang.`}</p>
+            <p>Gunakan daftar ini sebagai shortlist awal, lalu buka detail tempat untuk cek alamat, jam buka, fasilitas, dan rekomendasi terkait sebelum berangkat.</p>
+          </div>
+          <div class="rounded-2xl border border-line bg-paper p-5">
+            <p class="text-xs uppercase tracking-[0.25em] text-muted">Checklist cepat</p>
+            <ul class="mt-4 space-y-3 text-sm leading-6 text-muted">
+              <li><i class="ri-map-pin-line"></i> Pilih area yang paling dekat dengan rute kamu.</li>
+              <li><i class="ri-time-line"></i> Cek jam buka, terutama untuk malam atau pagi.</li>
+              <li><i class="ri-wifi-line"></i> Untuk WFC, prioritaskan WiFi, colokan, dan suasana.</li>
+              <li><i class="ri-money-dollar-circle-line"></i> Bandingkan kisaran harga sebelum datang ramai-ramai.</li>
+            </ul>
+          </div>
+        </section>
         <section class="mt-8">
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-muted">{places.length} tempat ditemukan.</p>
@@ -59,6 +80,14 @@ const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
         </section>
         <section class="mt-10">
           <SeoContentRenderer blocks={page.content} />
+        </section>
+        <section class="mt-10 rounded-[1.75rem] border border-line bg-surface p-6">
+          <p class="text-xs uppercase tracking-[0.25em] text-muted">FAQ lokal</p>
+          <div class="mt-4 grid gap-4 lg:grid-cols-3">
+            <div><h2 class="text-lg font-semibold">Apa halaman ini selalu update?</h2><p class="mt-2 text-sm leading-6 text-muted">Data tempat diperbarui dari admin editorial. Kalau ada info berubah, gunakan tombol laporan di halaman tempat.</p></div>
+            <div><h2 class="text-lg font-semibold">Bagaimana urutan rekomendasi dibuat?</h2><p class="mt-2 text-sm leading-6 text-muted">Urutan mempertimbangkan status publish, pilihan editorial, kebutuhan pencarian, dan kelengkapan data tempat.</p></div>
+            <div><h2 class="text-lg font-semibold">Apakah semua tempat sudah pernah dikunjungi?</h2><p class="mt-2 text-sm leading-6 text-muted">Beberapa tempat dikurasi dari data publik dan laporan lokal. Detail bisa berubah, jadi cek ulang sebelum berangkat.</p></div>
+          </div>
         </section>
         <div class="mt-10">
           <RelatedSeoPages pages={relatedPages} />

@@ -5,6 +5,7 @@ import SiteHeader from '@/components/layout/SiteHeader.astro';
 import SiteFooter from '@/components/layout/SiteFooter.astro';
 import { titleTemplate, truncateDescription } from '@/lib/seo/meta';
 import { canonicalUrl } from '@/lib/seo/canonical';
+import { siteUrl } from '@/lib/constants';
 
 const {
   title,
@@ -21,6 +22,7 @@ const pageTitle = titleTemplate(title);
 const pageDescription = truncateDescription(description);
 const runtimeSiteUrl = Astro.locals.runtime?.env?.PUBLIC_SITE_URL;
 const pageCanonical = canonical || canonicalUrl(Astro.url.pathname, null, runtimeSiteUrl);
+const pageImage = image || `${runtimeSiteUrl || siteUrl()}/og-default.svg`;
 const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter(Boolean);
 ---
 <!doctype html>
@@ -36,8 +38,11 @@ const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={pageCanonical} />
-    {image && <meta property="og:image" content={image} />}
-    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={pageImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={pageImage} />
     <meta name="theme-color" content="#111111" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>

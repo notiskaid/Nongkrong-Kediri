@@ -2,11 +2,11 @@
 import { SITE, QUICK_KEYWORDS } from '@/lib/constants';
 ---
 <footer class="mt-16 border-t border-line bg-paper py-10">
-  <div class="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 md:grid-cols-[1.5fr_1fr] lg:px-8">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
     <div>
       <p class="text-lg font-semibold">{SITE.name}</p>
       <p class="mt-3 max-w-xl text-sm leading-7 text-muted">{SITE.description}</p>
-      <p class="mt-5 text-xs text-muted">Dibuat sebagai direktori lokal yang kuratif, cepat, dan SEO-ready.</p>
+      <p class="mt-5 text-xs leading-5 text-muted">Direktori lokal yang dikurasi manual. Data tempat bisa berubah; gunakan fitur laporan di halaman tempat untuk bantu memperbarui info.</p>
     </div>
     <div>
       <p class="text-sm font-semibold">Shortcut</p>
@@ -14,6 +14,15 @@ import { SITE, QUICK_KEYWORDS } from '@/lib/constants';
         {QUICK_KEYWORDS.map((item) => (
           <a href={item.href} class="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs text-muted no-underline hover:border-ink hover:text-ink">{item.label}</a>
         ))}
+      </div>
+    </div>
+    <div>
+      <p class="text-sm font-semibold">Editorial</p>
+      <div class="mt-3 space-y-2 text-sm text-muted">
+        <a href="/submit-tempat/" class="block no-underline hover:text-ink">Submit tempat</a>
+        <a href="/sitemap.xml" class="block no-underline hover:text-ink">Sitemap</a>
+        <a href="/rss.xml" class="block no-underline hover:text-ink">RSS update</a>
+        <p class="pt-2 text-xs leading-5">Fokus: cafe, WFC, tempat ngopi, area populer, dan kebutuhan nongkrong di Kediri.</p>
       </div>
     </div>
   </div>

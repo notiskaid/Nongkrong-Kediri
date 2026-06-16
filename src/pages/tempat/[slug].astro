@@ -23,6 +23,11 @@ if (!place) {
 }
 const relatedPlaces = place ? await getRelatedPlaces(Astro.locals.supabase, place) : [];
 const breadcrumbs = place ? breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Tempat', href: '/tempat-ngopi-kediri/' }, { name: place.name, href: `/tempat/${place.slug}/` }]) : null;
+const internalLinks = place ? [
+  place.area_slug && { label: `Tempat di ${place.area_name}`, href: `/area/${place.area_slug}/` },
+  place.categories?.[0] && { label: `${place.categories[0].name} Kediri`, href: `/${place.categories[0].slug}-kediri/` },
+  place.use_cases?.[0] && { label: `${place.use_cases[0].name} Kediri`, href: `/${place.use_cases[0].slug}-kediri/` }
+].filter(Boolean) as { label: string; href: string }[] : [];
 ---
 <PlaceLayout
   title={place?.meta_title || (place ? `${place.name}: Alamat, Jam Buka, Fasilitas & Review` : 'Tempat tidak ditemukan')}
@@ -40,10 +45,24 @@ const breadcrumbs = place ? breadcrumbSchema([{ name: 'Home', href: '/' }, { nam
           <PlaceQuickFacts place={place} />
           <section class="grid gap-8 lg:grid-cols-[1fr_360px]">
             <article class="space-y-8">
-              <div class="prose-nk rounded-2xl border border-line bg-surface p-5">
+              <div class="prose-nk rounded-[1.75rem] border border-line bg-surface p-6">
                 <h2>Tentang {place.name}</h2>
                 <p>{place.description || place.excerpt || 'Deskripsi editorial belum tersedia.'}</p>
                 {place.editorial_notes && <p>{place.editorial_notes}</p>}
+                <h2>Yang perlu diketahui sebelum datang</h2>
+                <ul>
+                  <li>Area: {place.area_name || 'Kediri'}.</li>
+                  <li>Kisaran harga: {place.price_label || 'belum dicatat'}.</li>
+                  <li>Cocok untuk: {place.use_cases?.map((term) => term.name).join(', ') || 'nongkrong santai'}.</li>
+                  <li>Fasilitas tercatat: {place.facilities?.map((term) => term.name).join(', ') || 'belum dicatat'}.</li>
+                </ul>
+                {internalLinks.length > 0 && (
+                  <>
+                    <h2>Jelajahi rekomendasi terkait</h2>
+                    <p>Kalau masih membandingkan pilihan, lanjutkan dari halaman terkait ini:</p>
+                    <ul>{internalLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}</ul>
+                  </>
+                )}
               </div>
               <PlaceGallery place={place} />
               <PlaceReportForm client:load placeId={place.id} placeName={place.name} />

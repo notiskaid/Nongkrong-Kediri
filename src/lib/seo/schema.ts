@@ -55,6 +55,31 @@ export function itemListSchema(page: SeoPage, places: Place[]) {
   };
 }
 
+export function collectionPageSchema(page: SeoPage) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: page.h1 || page.title,
+    description: page.description || page.meta_description,
+    url: canonicalUrl(`/${page.slug}/`)
+  };
+}
+
+export function faqSchema(items: { question: string; answer: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer
+      }
+    }))
+  };
+}
+
 export function websiteSchema() {
   const url = siteUrl();
   return {

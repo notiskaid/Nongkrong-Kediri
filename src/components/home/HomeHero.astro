@@ -3,16 +3,37 @@ import Button from '@/components/base/Button.astro';
 import SearchBox from '@/components/listing/SearchBox';
 ---
 <section class="py-12 sm:py-16">
-  <div class="max-w-4xl">
-    <p class="mb-4 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">Kediri local directory</p>
-    <h1 class="text-5xl font-bold tracking-tight sm:text-7xl">Nongkrong Kediri</h1>
-    <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Temukan tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri sesuai kebutuhanmu. Cari tempat yang nyaman buat nugas, kerja, ngobrol malam, atau sekadar ngopi santai.</p>
-    <div class="mt-8 max-w-2xl">
-      <SearchBox client:load />
+  <div class="grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
+    <div>
+      <p class="mb-4 inline-flex rounded-full border border-line bg-surface px-4 py-1.5 text-xs text-muted">Panduan lokal Kediri, dikurasi untuk kebutuhan nyata</p>
+      <h1 class="max-w-5xl text-5xl font-bold tracking-tight sm:text-7xl">Cari tempat nongkrong di Kediri tanpa tebak-tebakan.</h1>
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Temukan cafe, coffee shop, WFC, tempat ngobrol malam, spot outdoor, sampai pilihan dekat kampus dan stasiun. Ringkas, lokal, dan gampang dipakai sebelum berangkat.</p>
+      <div class="mt-8 max-w-2xl">
+        <SearchBox client:load />
+      </div>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <Button href="/tempat-ngopi-kediri/" variant="primary" icon="ri-cup-line">Lihat Tempat Ngopi</Button>
+        <Button href="/wfc-kediri/" icon="ri-macbook-line">WFC Kediri</Button>
+      </div>
     </div>
-    <div class="mt-6 flex flex-wrap gap-3">
-      <Button href="/tempat-ngopi-kediri/" variant="primary" icon="ri-cup-line">Lihat Tempat Ngopi</Button>
-      <Button href="/wfc-kediri/" icon="ri-macbook-line">WFC Kediri</Button>
+    <div class="rounded-[2rem] border border-line bg-surface p-4 shadow-soft">
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+        <a href="/wfc-kediri/" class="group rounded-3xl border border-line bg-paper p-5 no-underline hover:border-ink">
+          <p class="text-xs text-muted">Butuh fokus</p>
+          <h2 class="mt-2 text-2xl font-bold">WFC, WiFi, colokan</h2>
+          <p class="mt-3 text-sm leading-6 text-muted">Pilihan buat kerja, nugas, atau meeting santai.</p>
+        </a>
+        <a href="/cafe-outdoor-kediri/" class="group rounded-3xl border border-line bg-ink p-5 text-paper no-underline hover:text-paper">
+          <p class="text-xs opacity-70">Sore sampai malam</p>
+          <h2 class="mt-2 text-2xl font-bold">Outdoor & ngobrol</h2>
+          <p class="mt-3 text-sm leading-6 opacity-75">Spot yang lebih enak untuk santai daripada buru-buru.</p>
+        </a>
+        <a href="/area/mojoroto/" class="group rounded-3xl border border-line bg-paper p-5 no-underline hover:border-ink">
+          <p class="text-xs text-muted">Area ramai dicari</p>
+          <h2 class="mt-2 text-2xl font-bold">Mojoroto, Kota, Pesantren</h2>
+          <p class="mt-3 text-sm leading-6 text-muted">Mulai dari area kampus, pusat kota, sampai sisi timur Kediri.</p>
+        </a>
+      </div>
     </div>
   </div>
 </section>

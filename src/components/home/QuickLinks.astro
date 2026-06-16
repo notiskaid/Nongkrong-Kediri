@@ -2,15 +2,18 @@
 import { QUICK_KEYWORDS } from '@/lib/constants';
 ---
 <section>
-  <div class="flex items-end justify-between gap-4">
-    <h2 class="text-2xl font-semibold">Cari berdasarkan kebutuhan</h2>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.25em] text-muted">Mulai dari momen</p>
+      <h2 class="mt-2 text-3xl font-semibold">Datang buat apa hari ini?</h2>
+    </div>
   </div>
   <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
     {QUICK_KEYWORDS.map((item) => (
-      <a href={item.href} class="card-hover rounded-2xl border border-line bg-surface p-4 no-underline">
-        <i class={`${item.icon} text-xl`}></i>
-        <p class="mt-3 font-semibold">{item.label}</p>
-        <p class="mt-1 text-xs text-muted">Lihat listing otomatis</p>
+      <a href={item.href} class="card-hover group rounded-3xl border border-line bg-surface p-5 no-underline">
+        <span class="flex size-11 items-center justify-center rounded-2xl border border-line bg-paper"><i class={`${item.icon} text-xl`}></i></span>
+        <p class="mt-4 font-semibold">{item.label}</p>
+        <p class="mt-2 text-xs leading-5 text-muted">Buka rekomendasi yang relevan, bukan daftar acak.</p>
       </a>
     ))}
   </div>
