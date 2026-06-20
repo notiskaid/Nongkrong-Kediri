@@ -17,6 +17,22 @@ export function breadcrumbSchema(items: { name: string; href: string }[]) {
 }
 
 export function placeSchema(place: Place) {
+  const editorialReview = place.visited_at && place.editorial_rating && place.editorial_verdict
+    ? {
+        '@type': 'Review',
+        author: { '@type': 'Organization', name: 'Nongkrong Kediri', url: siteUrl() },
+        datePublished: place.visited_at,
+        reviewBody: place.editorial_verdict,
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: place.editorial_rating,
+          bestRating: 5,
+          worstRating: 1
+        },
+        publisher: { '@type': 'Organization', name: 'Nongkrong Kediri', url: siteUrl() }
+      }
+    : undefined;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'CafeOrCoffeeShop',
@@ -27,13 +43,7 @@ export function placeSchema(place: Place) {
     telephone: place.phone || undefined,
     url: canonicalUrl(`/tempat/${place.slug}/`, place.canonical_url),
     hasMap: place.google_maps_url || undefined,
-    aggregateRating: place.rating
-      ? {
-          '@type': 'AggregateRating',
-          ratingValue: place.rating,
-          reviewCount: place.rating_count || undefined
-        }
-      : undefined,
+    review: editorialReview,
     geo:
       place.latitude && place.longitude
         ? { '@type': 'GeoCoordinates', latitude: place.latitude, longitude: place.longitude }
@@ -87,7 +97,7 @@ export function websiteSchema() {
     '@type': 'WebSite',
     name: 'Nongkrong Kediri',
     url,
-    description: 'Panduan lokal untuk menemukan tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri berdasarkan area, suasana, fasilitas, dan kebutuhan.',
+    description: 'Rekomendasi cafe, tempat ngopi, WFC, dan tempat nongkrong di Kediri. Temukan tempat terbaik untuk bersantai, bekerja, atau berkumpul dengan teman-teman di kota Kediri.',
     potentialAction: {
       '@type': 'SearchAction',
       target: `${url}/search/?q={search_term_string}`,

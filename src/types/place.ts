@@ -39,6 +39,11 @@ export type Place = {
   price_label?: string | null;
   rating?: number | null;
   rating_count?: number | null;
+  visited_at?: string | null;
+  editorial_rating?: number | null;
+  editorial_highlights?: string | null;
+  editorial_notes_cons?: string | null;
+  editorial_verdict?: string | null;
   opening_hours?: OpeningHours | null;
   status?: 'draft' | 'review' | 'published' | 'archived' | 'closed' | string;
   is_featured?: boolean;
@@ -66,6 +71,7 @@ export type PlaceQueryConfig = {
   areas?: string[];
   price_label?: string[];
   is_featured?: boolean;
-  sort?: 'featured_first' | 'editorial_score_desc' | 'newest' | 'name_asc';
+  min_rating?: number;
+  sort?: 'featured_first' | 'editorial_score_desc' | 'newest' | 'name_asc' | 'rating_desc';
   limit?: number;
 };

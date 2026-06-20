@@ -22,7 +22,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="focus-ring flex size-10 items-center justify-center rounded-xl border border-line bg-surface text-ink"
+      className="focus-ring flex size-9 items-center justify-center rounded-full border border-ink bg-surface text-ink"
       aria-label="Ganti tema"
     >
       <i className={isDark ? 'ri-sun-line' : 'ri-moon-line'} />

@@ -3,21 +3,26 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/base/Container.astro';
 import HomeHero from '@/components/home/HomeHero.astro';
 import QuickLinks from '@/components/home/QuickLinks.astro';
+import CafeKediriFeature from '@/components/home/CafeKediriFeature.astro';
 import FeaturedPlaces from '@/components/home/FeaturedPlaces.astro';
+import CafeMoodBoard from '@/components/home/CafeMoodBoard.astro';
 import WfcPicks from '@/components/home/WfcPicks.astro';
 import AreaShortcut from '@/components/home/AreaShortcut.astro';
 import { getAreas } from '@/lib/queries/taxonomy';
 import { filterPlacesByConfig, getFeaturedPlaces, getPublishedPlaces } from '@/lib/queries/places';
-import { SITE } from '@/lib/constants';
+import { getSeoPageBySlug } from '@/lib/queries/seo-pages';
 import { websiteSchema } from '@/lib/seo/schema';
 
 const supabase = Astro.locals.supabase;
 const featuredPlaces = await getFeaturedPlaces(supabase, 6);
 const allPlaces = await getPublishedPlaces(supabase);
+const cafePage = await getSeoPageBySlug(supabase, 'cafe-kediri');
+const cafeConfig = cafePage?.query_config || { categories: ['cafe', 'coffee-shop'], limit: 4, sort: 'featured_first' as const };
+const cafePlaces = filterPlacesByConfig(allPlaces, cafeConfig);
 const wfcPlaces = filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], facilities: ['wifi', 'colokan'], limit: 3, sort: 'featured_first' });
 const areas = await getAreas(supabase);
 ---
-<BaseLayout title="Nongkrong Kediri" description={SITE.description} jsonLd={[websiteSchema()]}>
+<BaseLayout title="Nongkrong Kediri | Cafe Kediri, Tempat Ngopi & WFC" description="Direktori cafe Kediri, tempat ngopi, WFC, warkop, dan spot nongkrong berdasarkan area, fasilitas, harga, dan suasana." jsonLd={[websiteSchema()]}>
   <script is:inline>
     (() => {
       const hash = window.location.hash;
@@ -27,13 +32,15 @@ const areas = await getAreas(supabase);
       if (isRecovery) window.location.replace(`/admin/reset-password/${hash}`);
     })();
   </script>
-  <Container>
-    <HomeHero />
-    <div class="space-y-14 py-8">
-      <QuickLinks />
-      <FeaturedPlaces places={featuredPlaces} />
-      <WfcPicks places={wfcPlaces} />
-      <AreaShortcut areas={areas} />
-    </div>
+  <HomeHero />
+  <QuickLinks />
+  <CafeKediriFeature page={cafePage} places={cafePlaces} />
+  <Container class="space-y-14 py-12">
+    <FeaturedPlaces places={featuredPlaces} />
+    <CafeMoodBoard />
+  </Container>
+  <WfcPicks places={wfcPlaces} />
+  <Container class="py-12">
+    <AreaShortcut areas={areas} />
   </Container>
 </BaseLayout>

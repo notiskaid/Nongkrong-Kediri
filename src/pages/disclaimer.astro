@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import { SITE } from '@/lib/constants';
+import { breadcrumbSchema } from '@/lib/seo/schema';
+---
+<BaseLayout
+  title="Disclaimer & Akurasi Data Nongkrong Kediri"
+  description="Kebijakan akurasi data, sumber informasi, koreksi, foto, dan hubungan editorial Nongkrong Kediri dengan tempat yang tercantum."
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Disclaimer', href: '/disclaimer/' }])]}
+>
+  <Container class="py-12">
+    <section class="section-masthead border-y border-ink p-6">
+      <p class="mb-4 inline-flex rounded-full border border-ink bg-surface px-4 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-muted">Akurasi & koreksi</p>
+      <h1 class="display-heading text-6xl sm:text-8xl">Disclaimer data</h1>
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Nongkrong Kediri adalah direktori editorial independen. Kami berupaya menyajikan info tempat yang berguna, tapi data lapangan bisa berubah sewaktu-waktu.</p>
+    </section>
+
+    <section class="mt-10 grid gap-6 lg:grid-cols-[1fr_.75fr]">
+      <article class="prose-nk border border-ink bg-surface p-6 shadow-offset">
+        <h2>Sumber informasi</h2>
+        <p>Informasi tempat dapat disusun dari kombinasi kurasi editorial, data publik, situs atau media sosial resmi, informasi dari pemilik usaha, kontribusi pembaca, serta pembaruan yang dilakukan admin.</p>
+        <p>Kami tidak selalu menerima data langsung dari pihak tempat. Karena itu, sebagian informasi perlu dianggap sebagai panduan awal sebelum berkunjung.</p>
+
+        <h2>Akurasi data</h2>
+        <p>Detail seperti jam buka, alamat, nomor kontak, menu, harga, fasilitas, rating, suasana, dan ketersediaan tempat dapat berubah tanpa pemberitahuan.</p>
+        <p>Sebelum datang, pembaca disarankan mengecek ulang informasi terbaru melalui kanal resmi tempat, peta digital, atau menghubungi pihak tempat secara langsung.</p>
+
+        <h2>Foto dan materi visual</h2>
+        <p>Foto digunakan untuk membantu pembaca memahami suasana tempat. Materi visual dapat berasal dari sumber publik, kontribusi, dokumentasi editorial, atau kiriman pihak terkait.</p>
+        <p>Jika ada foto, informasi, atau materi yang perlu dikoreksi, diberi kredit, diganti, atau dihapus, pemilik usaha atau pihak terkait dapat menghubungi kami.</p>
+
+        <h2>Relasi editorial</h2>
+        <p>Nongkrong Kediri tidak berafiliasi resmi dengan tempat yang tercantum, kecuali jika dinyatakan jelas sebagai kerja sama, sponsor, atau iklan.</p>
+        <p>Listing, rating, dan rekomendasi bersifat informatif dan editorial. Informasi di situs ini bukan jaminan kualitas layanan, harga, pengalaman, atau ketersediaan fasilitas pada saat kunjungan.</p>
+
+        <h2>Koreksi dan klaim tempat</h2>
+        <p>Pemilik usaha, pengelola tempat, atau pembaca dapat mengirim koreksi jika menemukan data yang sudah tidak akurat. Kami akan meninjau pembaruan yang relevan agar direktori tetap berguna.</p>
+      </article>
+
+      <aside class="space-y-5">
+        <div class="border border-ink bg-butter/30 p-6 shadow-offset">
+          <p class="editorial-label">Butuh koreksi?</p>
+          <h2 class="display-heading mt-3 text-5xl">Kirim update</h2>
+          <p class="mt-4 text-sm leading-7 text-muted">Pakai fitur laporan di halaman tempat, atau kirim email berisi nama tempat, data lama, data baru, dan bukti pendukung jika ada.</p>
+          <a href={`mailto:${SITE.email}?subject=Koreksi%20Data%20Nongkrong%20Kediri`} class="mt-5 inline-flex rounded-full border border-ink bg-ink px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline">Email koreksi</a>
+        </div>
+        <div class="border border-ink bg-ink p-6 text-paper shadow-offset">
+          <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Catatan pembaca</p>
+          <p class="mt-4 text-sm leading-7 text-paper/75">Gunakan Nongkrong Kediri sebagai panduan awal. Untuk keputusan datang hari ini, tetap cek info terbaru dari kanal resmi tempat.</p>
+        </div>
+      </aside>
+    </section>
+  </Container>
+</BaseLayout>

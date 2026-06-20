@@ -1,0 +1,47 @@
+---
+import type { SeoPage } from '@/types/seo-page';
+import type { Place } from '@/types/place';
+
+const { page, places = [], isThin = false } = Astro.props as { page: SeoPage; places?: Place[]; isThin?: boolean };
+const slug = page.slug;
+const customGuide = page.content?.find((block) => block.type === 'intent_guide');
+
+const profiles = [
+  { match: ['live-music'], title: 'Sebelum datang buat live music', criteria: ['Cek jadwal performer dan jam mulai.', 'Pastikan volume musik cocok dengan tujuan datang.', 'Kalau ramai, prioritaskan tempat yang menerima reservasi.'], avoid: 'Kurang cocok untuk WFC saat sesi musik sudah mulai.' },
+  { match: ['24-jam'], title: 'Checklist cafe 24 jam', criteria: ['Validasi jam buka terakhir.', 'Cek keamanan parkir dan akses pulang malam.', 'Pilih area yang tetap ramai kalau datang larut.'], avoid: 'Jangan mengandalkan data lama karena jam operasional malam sering berubah.' },
+  { match: ['aesthetic'], title: 'Untuk cafe aesthetic', criteria: ['Perhatikan ambience, interior, dan kenyamanan duduk.', 'Datang di jam cahaya bagus kalau ingin foto.', 'Pastikan tempat tetap enak untuk ngobrol, bukan hanya visual.'], avoid: 'Kurang cocok kalau kamu butuh tempat fokus lama tanpa distraksi.' },
+  { match: ['instagramable'], title: 'Untuk spot foto', criteria: ['Cari pencahayaan alami atau spot visual yang jelas.', 'Cek area indoor/outdoor agar tidak datang di jam kurang pas.', 'Pilih tempat yang tetap punya menu dan pelayanan layak.'], avoid: 'Jangan pilih hanya dari visual kalau tujuanmu WFC atau meeting.' },
+  { match: ['wfc'], title: 'Untuk WFC dan laptopan', criteria: ['WiFi, colokan, meja, dan noise level lebih penting dari rating.', 'Pilih tempat yang nyaman untuk duduk 2-3 jam.', 'Cek jam ramai agar tidak mengganggu kerja.'], avoid: 'Kurang cocok kalau tempat terlalu ramai, terlalu gelap, atau meja kecil.' },
+  { match: ['nugas'], title: 'Untuk nugas', criteria: ['Harga masuk akal untuk mahasiswa.', 'WiFi stabil dan colokan cukup.', 'Suasana tidak terlalu bising untuk baca/tulis.'], avoid: 'Hindari jam peak kalau butuh konsentrasi panjang.' },
+  { match: ['view-alam', 'outdoor'], title: 'Untuk view alam dan outdoor', criteria: ['Cek cuaca dan waktu terbaik datang.', 'Perhatikan akses jalan, parkir, dan pencahayaan malam.', 'Pilih tempat dengan area duduk yang tetap nyaman saat ramai.'], avoid: 'Kurang cocok saat hujan atau jika butuh ruangan AC.' },
+  { match: ['kids-friendly'], title: 'Untuk kids friendly', criteria: ['Cek keamanan area duduk dan ruang gerak anak.', 'Cari fasilitas area bermain atau tempat yang lapang.', 'Pastikan menu dan toilet memadai untuk keluarga.'], avoid: 'Kurang cocok kalau area terlalu sempit atau dekat jalan ramai.' },
+  { match: ['keluarga'], title: 'Untuk keluarga', criteria: ['Utamakan meja besar, parkir, mushola, dan menu variatif.', 'Pilih tempat yang tidak terlalu bising untuk ngobrol.', 'Reservasi lebih aman untuk rombongan.'], avoid: 'Kurang cocok kalau seating terbatas atau hanya fokus coffee bar kecil.' },
+  { match: ['bukber'], title: 'Untuk bukber', criteria: ['Pastikan bisa reservasi dan kapasitas cukup.', 'Cek mushola, parkir, dan estimasi serving time.', 'Datang lebih awal agar tidak antre saat adzan.'], avoid: 'Jangan pilih tempat tanpa konfirmasi kapasitas rombongan.' },
+  { match: ['rating-tinggi'], title: 'Memahami rating tinggi', criteria: ['Rating membantu shortlist, tapi bukan jaminan cocok.', 'Bandingkan jumlah rating, fasilitas, dan kebutuhan datang.', 'Baca detail tempat sebelum memutuskan.'], avoid: 'Jangan hanya mengejar angka rating kalau kebutuhanmu spesifik.' },
+  { match: ['dekat-kampus'], title: 'Dekat kampus', criteria: ['Cocok untuk nugas, kerja kelompok, dan janjian singkat.', 'Perhatikan harga, WiFi, colokan, dan jarak dari kos/kampus.', 'Cek jam ramai sepulang kuliah.'], avoid: 'Beberapa tempat dekat kampus bisa cepat penuh di sore-malam.' },
+  { match: ['dekat-stasiun'], title: 'Dekat stasiun', criteria: ['Prioritaskan akses cepat, parkir, dan jam buka.', 'Cocok untuk transit, janjian, atau menunggu kereta.', 'Cek jarak aktual dari pintu stasiun.'], avoid: 'Kurang cocok untuk duduk lama kalau tempatnya ramai transit.' }
+];
+
+const profile = profiles.find((item) => item.match.some((term) => slug.includes(term))) || {
+  title: 'Cara membaca rekomendasi ini',
+  criteria: ['Mulai dari area terdekat.', 'Cek fasilitas utama dan jam buka.', 'Gunakan halaman detail untuk memastikan suasana, harga, dan akses.'],
+  avoid: 'Jangan jadikan daftar ini satu-satunya patokan; data tempat bisa berubah.'
+};
+const guide = customGuide || profile;
+---
+<section class="mt-8 grid gap-4 border border-ink bg-surface p-6 shadow-offset lg:grid-cols-[1fr_.85fr]">
+  <div>
+    <p class="editorial-label">{'label' in guide && guide.label ? guide.label : 'Panduan singkat'}</p>
+    <h2 class="display-heading mt-2 text-4xl">{guide.title}</h2>
+    <p class="mt-4 text-sm leading-7 text-muted">{'description' in guide && guide.description ? guide.description : 'Gunakan kriteria di samping untuk menilai apakah tempat cocok dengan tujuan datangmu.'}</p>
+    {isThin && <p class="mt-4 border border-ink bg-butter/30 p-3 text-sm leading-6 text-muted">Catatan editorial: pilihan yang cocok masih terbatas. Daftar akan diperbarui saat data tempat bertambah.</p>}
+  </div>
+  <div class="border border-ink bg-paper p-5">
+    <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">Kriteria kurasi</p>
+    <ul class="mt-4 space-y-3 text-sm leading-6 text-muted">
+      {guide.criteria.map((item) => <li><i class="ri-check-line text-ink"></i> {item}</li>)}
+    </ul>
+    {guide.avoid && <p class="mt-5 border-t border-ink pt-4 text-sm leading-6 text-muted"><strong class="text-ink">{'avoid_label' in guide && guide.avoid_label ? guide.avoid_label : 'Kurang cocok'}:</strong> {guide.avoid}</p>}
+    <p class="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-muted">{places.length} tempat relevan saat ini</p>
+  </div>
+</section>

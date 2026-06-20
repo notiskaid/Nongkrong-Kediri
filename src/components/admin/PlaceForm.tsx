@@ -10,6 +10,27 @@ function ids(items?: Term[]) {
   return (items || []).map((item) => item.id || item.slug);
 }
 
+function dateInputValue(value?: string | null) {
+  if (!value) return '';
+  return value.slice(0, 10);
+}
+
+function qualityWarnings(place: Place | undefined) {
+  const warnings: string[] = [];
+  if (!place?.featured_image_url) warnings.push('Foto utama belum ada.');
+  if (place?.featured_image_url && !place?.featured_image_alt) warnings.push('Alt text foto utama belum diisi.');
+  if (!place?.address) warnings.push('Alamat belum diisi.');
+  if (!place?.google_maps_url) warnings.push('Google Maps URL belum diisi.');
+  if (!place?.area_id && !place?.area_slug) warnings.push('Area belum dipilih.');
+  if (!place?.categories?.length) warnings.push('Kategori belum dipilih.');
+  if (!place?.use_cases?.length) warnings.push('Use case belum dipilih.');
+  if (!place?.facilities?.length) warnings.push('Fasilitas belum dipilih.');
+  if (!place?.excerpt || place.excerpt.trim().length < 80) warnings.push('Excerpt masih pendek; targetkan minimal 80 karakter.');
+  if (!place?.description || place.description.trim().length < 220) warnings.push('Deskripsi editorial masih pendek; targetkan minimal 220 karakter.');
+  if (!place?.last_reviewed_at) warnings.push('Tanggal terakhir dicek belum diisi.');
+  return warnings;
+}
+
 export default function PlaceForm({ place, areas, categories, useCases, facilities }: { place?: Place; areas: Term[]; categories: Term[]; useCases: Term[]; facilities: Term[] }) {
   const [name, setName] = useState(place?.name || '');
   const [slug, setSlug] = useState(place?.slug || '');
@@ -41,6 +62,11 @@ export default function PlaceForm({ place, areas, categories, useCases, faciliti
       price_label: String(form.get('price_label') || ''),
       rating: Number(form.get('rating')) || null,
       rating_count: Number(form.get('rating_count')) || null,
+      visited_at: String(form.get('visited_at') || ''),
+      editorial_rating: Number(form.get('editorial_rating')) || null,
+      editorial_highlights: String(form.get('editorial_highlights') || ''),
+      editorial_notes_cons: String(form.get('editorial_notes_cons') || ''),
+      editorial_verdict: String(form.get('editorial_verdict') || ''),
       opening_label: String(form.get('opening_label') || ''),
       status: String(form.get('status') || 'draft'),
       is_featured: form.get('is_featured') === 'on',
@@ -48,6 +74,7 @@ export default function PlaceForm({ place, areas, categories, useCases, faciliti
       meta_title: String(form.get('meta_title') || ''),
       meta_description: String(form.get('meta_description') || ''),
       robots: String(form.get('robots') || 'index,follow'),
+      last_reviewed_at: String(form.get('last_reviewed_at') || ''),
       featured_image_url: String(form.get('featured_image_url') || ''),
       featured_image_alt: String(form.get('featured_image_alt') || ''),
       categories: getAll('categories'),
@@ -75,6 +102,21 @@ export default function PlaceForm({ place, areas, categories, useCases, faciliti
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
+      {qualityWarnings(place).length > 0 && (
+        <div className="border border-ink bg-butter/30 p-5 shadow-offset">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted">Quality checklist</p>
+              <h2 className="mt-2 text-xl font-black uppercase tracking-[-0.03em]">Cek sebelum publish</h2>
+            </div>
+            {place?.status === 'published' && <span className="border border-ink bg-ink px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-paper">Published dengan warning</span>}
+          </div>
+          <ul className="mt-4 grid gap-2 text-sm leading-6 text-ink sm:grid-cols-2">
+            {qualityWarnings(place).map((warning) => <li key={warning} className="flex gap-2"><span aria-hidden="true">-</span><span>{warning}</span></li>)}
+          </ul>
+        </div>
+      )}
+
       <div className="rounded-2xl border border-line bg-surface p-5">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">Nama tempat<input name="name" value={name} onChange={(e) => setName(e.target.value)} required className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
@@ -103,10 +145,11 @@ export default function PlaceForm({ place, areas, categories, useCases, faciliti
           </div>
           <label className="block text-sm">Label harga<select name="price_label" defaultValue={place?.price_label || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2"><option value="">-</option><option value="murah">murah</option><option value="sedang">sedang</option><option value="premium">premium</option></select></label>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm">Rating<input name="rating" type="number" step="0.1" defaultValue={place?.rating || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
-            <label className="block text-sm">Jumlah rating<input name="rating_count" type="number" defaultValue={place?.rating_count || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+            <label className="block text-sm">Rating Google Maps<input name="rating" type="number" step="0.1" defaultValue={place?.rating || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+            <label className="block text-sm">Jumlah rating Google<input name="rating_count" type="number" defaultValue={place?.rating_count || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
           </div>
           <label className="block text-sm">Jam buka ringkas<input name="opening_label" defaultValue={place?.opening_hours?.label || ''} placeholder="10.00–23.00 / 24 Jam" className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+          <label className="block text-sm">Terakhir dicek<input name="last_reviewed_at" type="date" defaultValue={dateInputValue(place?.last_reviewed_at)} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
         </div>
       </div>
 
@@ -117,9 +160,24 @@ export default function PlaceForm({ place, areas, categories, useCases, faciliti
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">
+        <div>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted">Catatan lapangan</p>
+          <h2 className="mt-2 text-xl font-semibold">Pengalaman editorial saat berkunjung</h2>
+          <p className="mt-2 text-sm leading-6 text-muted">Isi hanya setelah benar-benar berkunjung. Field ini bisa tampil sebagai review editorial dan JSON-LD review.</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm">Tanggal berkunjung terakhir<input name="visited_at" type="date" defaultValue={dateInputValue(place?.visited_at)} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+          <label className="block text-sm">Nilai editorial (1-5)<input name="editorial_rating" type="number" min="1" max="5" step="0.1" defaultValue={place?.editorial_rating || ''} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+        </div>
+        <label className="block text-sm">Yang terasa enak<textarea name="editorial_highlights" defaultValue={place?.editorial_highlights || ''} className="mt-2 min-h-24 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+        <label className="block text-sm">Yang perlu dipertimbangkan<textarea name="editorial_notes_cons" defaultValue={place?.editorial_notes_cons || ''} className="mt-2 min-h-24 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+        <label className="block text-sm">Kesimpulan kunjungan<textarea name="editorial_verdict" defaultValue={place?.editorial_verdict || ''} className="mt-2 min-h-28 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
+      </div>
+
+      <div className="rounded-2xl border border-line bg-surface p-5 space-y-4">
         <h2 className="font-semibold">SEO & publish</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block text-sm">Status<select name="status" defaultValue={place?.status || 'draft'} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2"><option value="draft">draft</option><option value="review">review</option><option value="published">published</option><option value="closed">closed</option></select></label>
+          <label className="block text-sm">Status<select name="status" defaultValue={place?.status || 'draft'} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2"><option value="draft">draft</option><option value="review">review</option><option value="published">published</option><option value="archived">archived</option><option value="closed">closed</option></select></label>
           <label className="block text-sm">Sort order<input name="sort_order" type="number" defaultValue={place?.sort_order || 0} className="mt-2 w-full rounded-xl border border-line bg-paper px-3 py-2" /></label>
           <label className="mt-8 flex items-center gap-2 text-sm"><input name="is_featured" type="checkbox" defaultChecked={Boolean(place?.is_featured)} /> Featured</label>
         </div>

@@ -4,13 +4,13 @@ import type { Place } from '@/types/place';
 const { places = [] } = Astro.props as { places: Place[] };
 ---
 <section>
-  <div class="mb-4 flex items-end justify-between gap-4">
+  <div class="mb-6 grid gap-4 border-y border-ink py-6 lg:grid-cols-[1fr_auto] lg:items-end">
     <div>
       <p class="text-xs uppercase tracking-[0.25em] text-muted">Pilihan editor</p>
-      <h2 class="mt-2 text-3xl font-semibold">Tempat yang layak masuk shortlist</h2>
+      <h2 class="display-heading mt-2 text-5xl sm:text-7xl">Tempat layak shortlist</h2>
       <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">Rekomendasi yang paling aman untuk mulai mencari: jelas areanya, fasilitasnya terbaca, dan cocok untuk kebutuhan populer di Kediri.</p>
     </div>
-    <a href="/tempat-ngopi-kediri/" class="text-sm no-underline">lihat semua →</a>
+    <a href="/tempat-ngopi-kediri/" class="rounded-full border border-ink bg-surface px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] no-underline">lihat semua →</a>
   </div>
   <PlaceListingGrid places={places} />
 </section>

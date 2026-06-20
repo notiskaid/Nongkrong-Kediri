@@ -13,6 +13,9 @@ type CloudflareRuntimeEnv = {
   ADMIN_EMAILS?: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   CLOUDFLARE_R2_PUBLIC_URL?: string;
+  PUBLIC_GOOGLE_SITE_VERIFICATION?: string;
+  PUBLIC_GA_ID?: string;
+  PUBLIC_GTM_ID?: string;
 };
 
 declare global {
@@ -36,4 +39,7 @@ interface ImportMetaEnv {
   readonly ADMIN_EMAILS?: string;
   readonly SUPABASE_SERVICE_ROLE_KEY?: string;
   readonly CLOUDFLARE_R2_PUBLIC_URL?: string;
+  readonly PUBLIC_GOOGLE_SITE_VERIFICATION?: string;
+  readonly PUBLIC_GA_ID?: string;
+  readonly PUBLIC_GTM_ID?: string;
 }

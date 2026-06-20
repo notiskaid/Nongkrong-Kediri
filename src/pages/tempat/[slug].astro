@@ -14,6 +14,9 @@ import PlaceReviewSection from '@/components/place/PlaceReviewSection';
 import RelatedPlaces from '@/components/place/RelatedPlaces.astro';
 import { getPlaceBySlug, getRelatedPlaces } from '@/lib/queries/places';
 import { breadcrumbSchema, placeSchema } from '@/lib/seo/schema';
+import { renderSafeMarkdown } from '@/lib/utils/markdown';
+import { isPlaceIndexable } from '@/lib/seo/indexability';
+import { linksForPlace } from '@/lib/seo/silo';
 
 const slug = Astro.params.slug!;
 const place = await getPlaceBySlug(Astro.locals.supabase, slug);
@@ -22,40 +25,46 @@ if (!place) {
   Astro.response.status = 404;
 }
 const relatedPlaces = place ? await getRelatedPlaces(Astro.locals.supabase, place) : [];
-const breadcrumbs = place ? breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Tempat', href: '/tempat-ngopi-kediri/' }, { name: place.name, href: `/tempat/${place.slug}/` }]) : null;
-const internalLinks = place ? [
-  place.area_slug && { label: `Tempat di ${place.area_name}`, href: `/area/${place.area_slug}/` },
-  place.categories?.[0] && { label: `${place.categories[0].name} Kediri`, href: `/${place.categories[0].slug}-kediri/` },
-  place.use_cases?.[0] && { label: `${place.use_cases[0].name} Kediri`, href: `/${place.use_cases[0].slug}-kediri/` }
-].filter(Boolean) as { label: string; href: string }[] : [];
+const breadcrumbs = place ? breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Cafe Kediri', href: '/cafe-kediri/' }, { name: place.name, href: `/tempat/${place.slug}/` }]) : null;
+const searchPathLinks = place ? linksForPlace(place).slice(0, 8) : [];
+const internalLinks = searchPathLinks;
+const placeRobots = place && isPlaceIndexable(place) ? place.robots || 'index,follow' : 'noindex,follow';
 ---
 <PlaceLayout
   title={place?.meta_title || (place ? `${place.name}: Alamat, Jam Buka, Fasilitas & Review` : 'Tempat tidak ditemukan')}
   description={place?.meta_description || place?.excerpt || 'Tempat tidak ditemukan.'}
-  robots={place?.robots || 'index,follow'}
+  robots={placeRobots}
   image={place?.featured_image_url}
   jsonLd={place ? [placeSchema(place), breadcrumbs] : []}
 >
   <Container class="py-10">
     {place ? (
       <>
-        <Breadcrumbs items={[{ label: 'tempat ngopi', href: '/tempat-ngopi-kediri/' }, { label: place.name }]} />
+        <Breadcrumbs items={[{ label: 'Cafe', href: '/cafe-kediri/' }, { label: place.name }]} />
         <PlaceHero place={place} />
         <div class="mt-10 space-y-8">
           <PlaceQuickFacts place={place} />
-          <section class="grid gap-8 lg:grid-cols-[1fr_360px]">
-            <article class="space-y-8">
-              <div class="prose-nk rounded-[1.75rem] border border-line bg-surface p-6">
+          <section class="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <article class="order-2 min-w-0 space-y-10 lg:order-1">
+              <div class="prose-nk min-w-0 border border-ink bg-surface p-5 shadow-offset sm:p-6">
                 <h2>Tentang {place.name}</h2>
-                <p>{place.description || place.excerpt || 'Deskripsi editorial belum tersedia.'}</p>
-                {place.editorial_notes && <p>{place.editorial_notes}</p>}
+                {place.description ? <div set:html={renderSafeMarkdown(place.description)} /> : <p>{place.excerpt || 'Deskripsi editorial belum tersedia.'}</p>}
+                {place.editorial_notes && <div set:html={renderSafeMarkdown(place.editorial_notes)} />}
                 <h2>Yang perlu diketahui sebelum datang</h2>
                 <ul>
                   <li>Area: {place.area_name || 'Kediri'}.</li>
                   <li>Kisaran harga: {place.price_label || 'belum dicatat'}.</li>
                   <li>Cocok untuk: {place.use_cases?.map((term) => term.name).join(', ') || 'nongkrong santai'}.</li>
-                  <li>Fasilitas tercatat: {place.facilities?.map((term) => term.name).join(', ') || 'belum dicatat'}.</li>
+                  <li>Fasilitas: {place.facilities?.map((term) => term.name).join(', ') || 'belum dicatat'}.</li>
                 </ul>
+                {searchPathLinks.length > 0 && (
+                  <div class="not-prose mt-6 border border-ink bg-paper p-4">
+                    <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-muted">Jalur pencarian</p>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                      {searchPathLinks.map((link) => <a href={link.href} class="rounded-full border border-ink bg-surface px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.12em] no-underline hover:bg-butter">{link.label}</a>)}
+                    </div>
+                  </div>
+                )}
                 {internalLinks.length > 0 && (
                   <>
                     <h2>Jelajahi rekomendasi terkait</h2>
@@ -65,10 +74,12 @@ const internalLinks = place ? [
                 )}
               </div>
               <PlaceGallery place={place} />
-              <PlaceReportForm client:load placeId={place.id} placeName={place.name} />
-              <PlaceReviewSection client:load />
+              <div class="space-y-8">
+                <PlaceReviewSection client:load place={place} />
+                <PlaceReportForm client:load placeId={place.id} placeName={place.name} />
+              </div>
             </article>
-            <aside class="space-y-5 lg:sticky lg:top-24 lg:self-start">
+            <aside class="order-1 space-y-5 lg:order-2 lg:sticky lg:top-24 lg:self-start">
               <PlaceFacilities place={place} />
               <PlaceUseCases place={place} />
               <PlaceOpeningHours place={place} />
@@ -79,8 +90,8 @@ const internalLinks = place ? [
         </div>
       </>
     ) : (
-      <div class="rounded-2xl border border-line bg-surface p-8">
-        <h1 class="text-3xl font-bold">Tempat tidak ditemukan</h1>
+      <div class="border border-ink bg-surface p-8 shadow-offset">
+        <h1 class="display-heading text-5xl">Tempat tidak ditemukan</h1>
         <p class="mt-3 text-muted">Data tempat ini belum ada atau belum dipublish.</p>
       </div>
     )}

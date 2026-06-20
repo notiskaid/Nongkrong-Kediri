@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import { getAreas } from '@/lib/queries/taxonomy';
+import { breadcrumbSchema } from '@/lib/seo/schema';
+import { isRedirectPath } from '@/lib/seo/silo';
+
+const areas = (await getAreas(Astro.locals.supabase)).filter((area) => !isRedirectPath(`/area/${area.slug}/`));
+---
+<BaseLayout
+  title="Area Nongkrong di Kediri"
+  description="Jelajahi cafe, tempat ngopi, WFC, dan tempat nongkrong di Kediri berdasarkan area seperti Mojoroto, Kota Kediri, Pesantren, dekat kampus, dan dekat stasiun."
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Area', href: '/area/' }])]}
+>
+  <Container class="py-12">
+    <Breadcrumbs items={[{ label: 'area' }]} />
+    <header class="section-masthead border-y border-ink p-6">
+      <p class="mb-3 inline-flex rounded-full border border-ink bg-surface px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-muted">Peta lokal</p>
+      <h1 class="display-heading text-6xl sm:text-8xl">Area Nongkrong Kediri</h1>
+      <p class="mt-5 max-w-3xl text-lg leading-8 text-muted">Mulai pencarian dari area. Cocok kalau kamu sudah tahu titik berangkat, butuh tempat dekat kampus, pusat kota, stasiun, atau sisi Kediri tertentu.</p>
+    </header>
+
+    <section class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {areas.map((area) => (
+        <a href={`/area/${area.slug}/`} class="group border border-ink bg-surface p-5 no-underline shadow-offset transition hover:-translate-y-1">
+          <p class="font-mono text-xs font-black uppercase tracking-[0.22em] text-muted">Area</p>
+          <h2 class="display-heading mt-3 text-4xl">{area.name}</h2>
+          {area.description && <p class="mt-3 line-clamp-3 text-sm leading-7 text-muted">{area.description}</p>}
+          <p class="mt-5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-ink">Lihat tempat →</p>
+        </a>
+      ))}
+    </section>
+
+    <section class="mt-10 border border-ink bg-ink p-6 text-paper shadow-offset">
+      <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Jalur cepat</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a href="/cafe-kediri/" class="rounded-full border border-paper px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">Cafe Kediri</a>
+        <a href="/tempat-ngopi-kediri/" class="rounded-full border border-paper px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">Tempat Ngopi</a>
+        <a href="/wfc-kediri/" class="rounded-full border border-paper px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">WFC Kediri</a>
+      </div>
+    </section>
+  </Container>
+</BaseLayout>

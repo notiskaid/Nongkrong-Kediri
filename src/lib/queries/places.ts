@@ -44,6 +44,7 @@ export function filterPlacesByConfig(places: Place[], config?: PlaceQueryConfig 
   let result = places.filter((place) => {
     if (config.is_featured != null && Boolean(place.is_featured) !== config.is_featured) return false;
     if (config.price_label?.length && !config.price_label.includes(place.price_label || '')) return false;
+    if (config.min_rating != null && Number(place.rating || 0) < config.min_rating) return false;
     if (!matchesAny(config.categories, termSlugs(place.categories))) return false;
     if (!matchesAny(config.use_cases, termSlugs(place.use_cases))) return false;
     if (!matchesAny(config.facilities, termSlugs(place.facilities))) return false;
@@ -58,10 +59,13 @@ export function filterPlacesByConfig(places: Place[], config?: PlaceQueryConfig 
     case 'newest':
       result = result.sort((a, b) => new Date(b.published_at || b.created_at || 0).getTime() - new Date(a.published_at || a.created_at || 0).getTime());
       break;
+    case 'rating_desc':
+      result = result.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0) || Number(b.is_featured) - Number(a.is_featured) || a.name.localeCompare(b.name));
+      break;
     case 'featured_first':
     case 'editorial_score_desc':
     default:
-      result = result.sort((a, b) => Number(b.is_featured) - Number(a.is_featured) || (a.sort_order || 999) - (b.sort_order || 999) || b.name.localeCompare(a.name));
+      result = result.sort((a, b) => Number(b.is_featured) - Number(a.is_featured) || (a.sort_order ?? 999) - (b.sort_order ?? 999) || a.name.localeCompare(b.name));
   }
 
   return config.limit ? result.slice(0, config.limit) : result;

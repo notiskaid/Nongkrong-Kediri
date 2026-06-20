@@ -4,6 +4,7 @@ export type SeoContentBlock =
   | { type: 'markdown'; content: string }
   | { type: 'faq'; items: { question: string; answer: string }[] }
   | { type: 'internal_links'; title?: string; links: { label: string; href: string }[] }
+  | { type: 'intent_guide'; label?: string; title: string; description?: string; criteria: string[]; avoid_label?: string; avoid?: string }
   | { type: 'note'; content: string };
 
 export type SeoPage = {

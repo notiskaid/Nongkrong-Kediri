@@ -10,15 +10,16 @@ const places = await searchPlaces(Astro.locals.supabase, q);
 ---
 <BaseLayout title="Cari Tempat" description="Cari tempat ngopi, cafe, WFC, dan tempat nongkrong di Kediri." robots="noindex,follow">
   <Container class="py-10">
-    <header class="max-w-3xl">
-      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Cari tempat</h1>
-      <p class="mt-4 text-muted">Halaman search dibuat untuk user, bukan halaman SEO. Query parameter diset noindex.</p>
+    <header class="section-masthead border-y border-ink p-6">
+      <p class="editorial-label mb-3">Search desk</p>
+      <h1 class="display-heading text-6xl sm:text-8xl">Cari tempat</h1>
+      <p class="mt-4 text-muted">Cari berdasarkan nama tempat, area, suasana, atau kebutuhan seperti WFC dan outdoor.</p>
     </header>
-    <div class="mt-8 max-w-2xl">
+    <div class="mt-8 max-w-2xl border border-ink bg-surface p-3 shadow-offset">
       <SearchBox client:load defaultValue={q} />
     </div>
     <section class="mt-8">
-      <p class="mb-4 text-sm text-muted">{places.length} hasil {q ? `untuk “${q}”` : 'tersedia'}.</p>
+      <p class="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-muted">{places.length} hasil {q ? `untuk “${q}”` : 'tersedia'}.</p>
       <PlaceListingGrid places={places} emptyTitle="Tidak ada hasil" emptyDescription="Coba kata kunci lain seperti WFC, outdoor, murah, atau nama area." />
     </section>
   </Container>

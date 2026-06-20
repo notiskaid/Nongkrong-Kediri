@@ -1,39 +1,13 @@
 ---
-import Button from '@/components/base/Button.astro';
-import SearchBox from '@/components/listing/SearchBox';
 ---
-<section class="py-12 sm:py-16">
-  <div class="grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
-    <div>
-      <p class="mb-4 inline-flex rounded-full border border-line bg-surface px-4 py-1.5 text-xs text-muted">Panduan lokal Kediri, dikurasi untuk kebutuhan nyata</p>
-      <h1 class="max-w-5xl text-5xl font-bold tracking-tight sm:text-7xl">Cari tempat nongkrong di Kediri tanpa tebak-tebakan.</h1>
-      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Temukan cafe, coffee shop, WFC, tempat ngobrol malam, spot outdoor, sampai pilihan dekat kampus dan stasiun. Ringkas, lokal, dan gampang dipakai sebelum berangkat.</p>
-      <div class="mt-8 max-w-2xl">
-        <SearchBox client:load />
-      </div>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <Button href="/tempat-ngopi-kediri/" variant="primary" icon="ri-cup-line">Lihat Tempat Ngopi</Button>
-        <Button href="/wfc-kediri/" icon="ri-macbook-line">WFC Kediri</Button>
-      </div>
-    </div>
-    <div class="rounded-[2rem] border border-line bg-surface p-4 shadow-soft">
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-        <a href="/wfc-kediri/" class="group rounded-3xl border border-line bg-paper p-5 no-underline hover:border-ink">
-          <p class="text-xs text-muted">Butuh fokus</p>
-          <h2 class="mt-2 text-2xl font-bold">WFC, WiFi, colokan</h2>
-          <p class="mt-3 text-sm leading-6 text-muted">Pilihan buat kerja, nugas, atau meeting santai.</p>
-        </a>
-        <a href="/cafe-outdoor-kediri/" class="group rounded-3xl border border-line bg-ink p-5 text-paper no-underline hover:text-paper">
-          <p class="text-xs opacity-70">Sore sampai malam</p>
-          <h2 class="mt-2 text-2xl font-bold">Outdoor & ngobrol</h2>
-          <p class="mt-3 text-sm leading-6 opacity-75">Spot yang lebih enak untuk santai daripada buru-buru.</p>
-        </a>
-        <a href="/area/mojoroto/" class="group rounded-3xl border border-line bg-paper p-5 no-underline hover:border-ink">
-          <p class="text-xs text-muted">Area ramai dicari</p>
-          <h2 class="mt-2 text-2xl font-bold">Mojoroto, Kota, Pesantren</h2>
-          <p class="mt-3 text-sm leading-6 text-muted">Mulai dari area kampus, pusat kota, sampai sisi timur Kediri.</p>
-        </a>
-      </div>
-    </div>
+<section class="relative isolate grid min-h-screen place-items-center overflow-hidden border-b border-ink bg-paper px-4 py-24 sm:px-6 lg:px-8">
+  <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgb(var(--color-butter)/.36),transparent_28%),radial-gradient(circle_at_82%_20%,rgb(var(--color-sky)/.48),transparent_30%),radial-gradient(circle_at_55%_78%,rgb(var(--color-coffee)/.18),transparent_28%),linear-gradient(145deg,rgb(var(--color-paper))_0%,rgb(var(--color-sky)/.42)_47%,rgb(var(--color-butter)/.34)_100%)]"></div>
+  <div class="pointer-events-none absolute left-1/2 top-[42%] h-44 w-[190vw] -translate-x-1/2 -rotate-6 rounded-[50%] border border-ink bg-coffee/15 sm:h-56 lg:h-72 lg:w-[135vw]"></div>
+  <div class="pointer-events-none absolute -left-16 top-[20%] h-32 w-52 rotate-12 border border-ink bg-surface/70 shadow-offset sm:left-[7%] sm:top-[28%]"></div>
+  <div class="pointer-events-none absolute -right-12 top-[19%] h-28 w-28 rounded-full border border-ink bg-butter/80 shadow-offset sm:right-[12%] sm:top-[27%] sm:h-36 sm:w-36"></div>
+  <div class="pointer-events-none absolute bottom-[18%] right-[8%] h-16 w-48 -rotate-6 border border-ink bg-sky/55 shadow-offset sm:bottom-[20%] sm:right-[18%]"></div>
+  <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-36 bg-[linear-gradient(180deg,transparent,rgb(var(--color-butter)/.55))]"></div>
+  <div class="relative mx-auto w-full max-w-[1440px]">
+    <h1 class="display-heading mx-auto w-[calc(100vw-2rem)] max-w-none text-center text-[14.5vw] leading-[0.82] tracking-[-0.06em] sm:w-full sm:text-[clamp(76px,19vw,300px)] sm:leading-[0.74] sm:tracking-[-0.08em]">Nongkrong<br />Kediri</h1>
   </div>
 </section>

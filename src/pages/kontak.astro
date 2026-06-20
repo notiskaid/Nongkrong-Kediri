@@ -1,0 +1,69 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import { SITE } from '@/lib/constants';
+import { breadcrumbSchema } from '@/lib/seo/schema';
+
+const emailHref = `mailto:${SITE.email}?subject=Kontak%20Nongkrong%20Kediri`;
+const topics = [
+  {
+    title: 'Pengaduan data',
+    body: 'Kirim koreksi jam buka, alamat, harga, fasilitas, foto, atau info tempat yang sudah berubah.',
+    subject: 'Koreksi Data Nongkrong Kediri'
+  },
+  {
+    title: 'Kerja sama & iklan',
+    body: 'Bahas listing sponsor, placement homepage, event lokal, atau kolaborasi brand yang relevan dengan pembaca Kediri.',
+    subject: 'Kerja Sama Nongkrong Kediri'
+  },
+  {
+    title: 'Hak cipta & foto',
+    body: 'Minta kredit, penggantian, atau penghapusan materi visual yang perlu dikoreksi.',
+    subject: 'Koreksi Foto Nongkrong Kediri'
+  },
+  {
+    title: 'Lainnya',
+    body: 'Untuk pertanyaan editorial, masukan situs, atau hal lain yang belum masuk kategori di atas.',
+    subject: 'Kontak Nongkrong Kediri'
+  }
+];
+---
+<BaseLayout
+  title="Kontak Nongkrong Kediri"
+  description="Hubungi Nongkrong Kediri untuk pengaduan data, koreksi foto, kerja sama, iklan, dan pertanyaan editorial."
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Kontak', href: '/kontak/' }])]}
+>
+  <Container class="py-12">
+    <section class="section-masthead border-y border-ink p-6">
+      <p class="mb-4 inline-flex rounded-full border border-ink bg-surface px-4 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-muted">Kontak editorial</p>
+      <h1 class="display-heading text-6xl sm:text-8xl">Hubungi kami</h1>
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Untuk pengaduan data, koreksi foto, kerja sama, iklan, atau pertanyaan lain seputar Nongkrong Kediri.</p>
+    </section>
+
+    <section class="mt-10 grid gap-6 lg:grid-cols-[1fr_.75fr]">
+      <div class="grid gap-4 sm:grid-cols-2">
+        {topics.map((topic) => (
+          <article class="border border-ink bg-surface p-5 shadow-offset">
+            <p class="editorial-label">Email</p>
+            <h2 class="display-heading mt-3 text-4xl">{topic.title}</h2>
+            <p class="mt-3 text-sm leading-7 text-muted">{topic.body}</p>
+            <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(topic.subject)}`} class="mt-5 inline-flex rounded-full border border-ink bg-ink px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline">Kirim email</a>
+          </article>
+        ))}
+      </div>
+
+      <aside class="space-y-5">
+        <div class="border border-ink bg-butter/30 p-6 shadow-offset">
+          <p class="editorial-label">Email utama</p>
+          <h2 class="display-heading mt-3 text-5xl">{SITE.email}</h2>
+          <p class="mt-4 text-sm leading-7 text-muted">Agar cepat ditinjau, sertakan nama tempat/topik, link terkait, detail masalah atau tujuan kontak, dan bukti pendukung jika ada.</p>
+          <a href={emailHref} class="mt-5 inline-flex rounded-full border border-ink bg-ink px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline">Email sekarang</a>
+        </div>
+        <div class="border border-ink bg-ink p-6 text-paper shadow-offset">
+          <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Catatan</p>
+          <p class="mt-4 text-sm leading-7 text-paper/75">Nongkrong Kediri dikelola secara editorial. Tidak semua masukan, rekomendasi, atau permintaan placement otomatis dipublikasikan.</p>
+        </div>
+      </aside>
+    </section>
+  </Container>
+</BaseLayout>

@@ -9,6 +9,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "smoke": "node scripts/smoke.mjs",
+    "import:google-maps:sql": "node scripts/generate-google-maps-import.mjs",
+    "import:google-maps": "node scripts/import-google-maps-to-supabase.mjs",
     "format": "prettier --write .",
     "deploy": "npm run build && wrangler deploy",
     "cf-typegen": "wrangler types"

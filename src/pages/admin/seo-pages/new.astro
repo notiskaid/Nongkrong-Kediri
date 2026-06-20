@@ -1,8 +1,15 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
 import SeoPageForm from '@/components/admin/SeoPageForm';
+import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
+const [areas, categories, useCases, facilities] = await Promise.all([
+  getAreas(Astro.locals.supabase),
+  getCategories(Astro.locals.supabase),
+  getUseCases(Astro.locals.supabase),
+  getFacilities(Astro.locals.supabase)
+]);
 ---
 <AdminLayout title="Tambah SEO Page">
   <div class="mb-6"><h1 class="text-3xl font-bold">Tambah SEO page</h1><p class="mt-2 text-sm text-muted">Buat landing page keyword tanpa hardcode listing.</p></div>
-  <SeoPageForm client:load />
+  <SeoPageForm client:load areas={areas} categories={categories} useCases={useCases} facilities={facilities} />
 </AdminLayout>

@@ -1,5 +1,6 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
+import DangerDelete from '@/components/admin/DangerDelete';
 import PlaceForm from '@/components/admin/PlaceForm';
 import { getPlaceByIdForAdmin } from '@/lib/queries/places';
 import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
@@ -21,6 +22,7 @@ if (!place) Astro.response.status = 404;
         <a href={`/tempat/${place.slug}/`} class="rounded-xl border border-line bg-surface px-4 py-2 text-sm no-underline">Preview</a>
       </div>
       <PlaceForm client:load place={place} areas={areas} categories={categories} useCases={useCases} facilities={facilities} />
+      <DangerDelete client:load endpoint={`/api/admin/places/${place.id}`} confirmText={place.slug} redirectTo="/admin/places/" />
     </>
   ) : <div class="rounded-2xl border border-line bg-surface p-6">Tempat tidak ditemukan.</div>}
 </AdminLayout>

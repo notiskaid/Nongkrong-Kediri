@@ -3,12 +3,15 @@ import SeoPageLayout from '@/layouts/SeoPageLayout.astro';
 import Container from '@/components/base/Container.astro';
 import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
 import SeoPageHeader from '@/components/seo/SeoPageHeader.astro';
+import SeoIntentGuide from '@/components/seo/SeoIntentGuide.astro';
 import SeoContentRenderer from '@/components/seo/SeoContentRenderer.astro';
 import RelatedSeoPages from '@/components/seo/RelatedSeoPages.astro';
 import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
 import HomeHero from '@/components/home/HomeHero.astro';
 import QuickLinks from '@/components/home/QuickLinks.astro';
+import CafeKediriFeature from '@/components/home/CafeKediriFeature.astro';
 import FeaturedPlaces from '@/components/home/FeaturedPlaces.astro';
+import CafeMoodBoard from '@/components/home/CafeMoodBoard.astro';
 import WfcPicks from '@/components/home/WfcPicks.astro';
 import AreaShortcut from '@/components/home/AreaShortcut.astro';
 import { getAreas } from '@/lib/queries/taxonomy';
@@ -16,6 +19,8 @@ import { SITE } from '@/lib/constants';
 import { getPublishedPlaces, filterPlacesByConfig } from '@/lib/queries/places';
 import { getPublishedSeoPages, getSeoPageBySlug } from '@/lib/queries/seo-pages';
 import { breadcrumbSchema, collectionPageSchema, faqSchema, itemListSchema, websiteSchema } from '@/lib/seo/schema';
+import { seoRobots } from '@/lib/seo/indexability';
+import { clusterSiblings, parentForSeoPage, SILO_PILLARS } from '@/lib/seo/silo';
 
 const slug = String(Astro.params.slug || '').replace(/^\/+|\/+$/g, '');
 const isHomeFallback = !slug;
@@ -24,8 +29,17 @@ if (!isHomeFallback && !page) Astro.response.status = 404;
 const allPlaces = await getPublishedPlaces(Astro.locals.supabase);
 const places = page ? filterPlacesByConfig(allPlaces, page.query_config) : [];
 const allSeoPages = isHomeFallback ? [] : await getPublishedSeoPages(Astro.locals.supabase);
-const relatedPages = allSeoPages.filter((item) => item.slug !== page?.slug).slice(0, 6);
+const parentLink = page ? parentForSeoPage(page) : null;
+const pillarLinks = SILO_PILLARS.filter((link) => `/${page?.slug}/` !== link.href);
+const siblingLinks = page ? clusterSiblings(page.slug, 4) : [];
+const relatedPages = siblingLinks
+  .map((link) => allSeoPages.find((item) => item.slug === link.slug))
+  .filter(Boolean)
+  .filter((item) => item!.slug !== page?.slug)
+  .slice(0, 4) as typeof allSeoPages;
 const featuredPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { is_featured: true, sort: 'featured_first', limit: 6 }) : [];
+const cafePage = isHomeFallback ? await getSeoPageBySlug(Astro.locals.supabase, 'cafe-kediri') : null;
+const cafePlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, cafePage?.query_config || { categories: ['cafe', 'coffee-shop'], limit: 4, sort: 'featured_first' }) : [];
 const wfcPlaces = isHomeFallback ? filterPlacesByConfig(allPlaces, { use_cases: ['wfc'], facilities: ['wifi', 'colokan'], limit: 3, sort: 'featured_first' }) : [];
 const areas = isHomeFallback ? await getAreas(Astro.locals.supabase) : [];
 const landingFaq = [
@@ -33,45 +47,39 @@ const landingFaq = [
   { question: 'Bagaimana urutan rekomendasi dibuat?', answer: 'Urutan mempertimbangkan status publish, pilihan editorial, kebutuhan pencarian, dan kelengkapan data tempat.' },
   { question: 'Apakah semua tempat sudah pernah dikunjungi?', answer: 'Beberapa tempat dikurasi dari data publik dan laporan lokal. Detail bisa berubah, jadi cek ulang sebelum berangkat.' }
 ];
+const pageFaq = page?.content?.find((block) => block.type === 'faq')?.items || landingFaq;
+const isThinSeoPage = Boolean(page && places.length > 0 && places.length < 3);
+const pageRobots = isHomeFallback ? 'index,follow' : page ? seoRobots(page, allPlaces) : 'noindex,follow';
+const breadcrumbItems = page ? [...(parentLink ? [{ label: parentLink.label.replace(' Kediri', ''), href: parentLink.href }] : []), { label: page.h1 }] : [];
+const breadcrumbJson = page ? [{ name: 'Home', href: '/' }, ...(parentLink ? [{ name: parentLink.label, href: parentLink.href }] : []), { name: page.h1, href: `/${page.slug}/` }] : [];
 ---
 <SeoPageLayout
   title={isHomeFallback ? 'Nongkrong Kediri' : page?.meta_title || page?.title || 'Halaman tidak ditemukan'}
   description={isHomeFallback ? SITE.description : page?.meta_description || page?.description || 'Halaman tidak ditemukan.'}
-  robots={page?.robots || 'index,follow'}
-  jsonLd={isHomeFallback ? [websiteSchema()] : page ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: page.h1, href: `/${page.slug}/` }]), collectionPageSchema(page), itemListSchema(page, places), faqSchema(landingFaq)] : []}
+  robots={pageRobots}
+  jsonLd={isHomeFallback ? [websiteSchema()] : page ? [breadcrumbSchema(breadcrumbJson), collectionPageSchema(page), itemListSchema(page, places), faqSchema(pageFaq)] : []}
 >
   {isHomeFallback ? (
-    <Container>
+    <>
       <HomeHero />
-      <div class="space-y-14 py-8">
-        <QuickLinks />
+      <QuickLinks />
+      <CafeKediriFeature page={cafePage} places={cafePlaces} />
+      <Container class="space-y-14 py-12">
         <FeaturedPlaces places={featuredPlaces} />
-        <WfcPicks places={wfcPlaces} />
+        <CafeMoodBoard />
+      </Container>
+      <WfcPicks places={wfcPlaces} />
+      <Container class="py-12">
         <AreaShortcut areas={areas} />
-      </div>
-    </Container>
+      </Container>
+    </>
   ) : (
     <Container class="py-10">
       {page ? (
       <>
-        <Breadcrumbs items={[{ label: page.h1 }]} />
+        <Breadcrumbs items={breadcrumbItems} />
         <SeoPageHeader page={page} />
-        <section class="mt-8 grid gap-4 rounded-[1.75rem] border border-line bg-surface p-6 lg:grid-cols-[1fr_.8fr]">
-          <div class="prose-nk">
-            <h2>Panduan singkat sebelum memilih</h2>
-            <p>{page.description || `Halaman ini membantu kamu menyaring tempat yang relevan untuk ${page.h1.toLowerCase()} berdasarkan area, fasilitas, suasana, dan kebutuhan datang.`}</p>
-            <p>Gunakan daftar ini sebagai shortlist awal, lalu buka detail tempat untuk cek alamat, jam buka, fasilitas, dan rekomendasi terkait sebelum berangkat.</p>
-          </div>
-          <div class="rounded-2xl border border-line bg-paper p-5">
-            <p class="text-xs uppercase tracking-[0.25em] text-muted">Checklist cepat</p>
-            <ul class="mt-4 space-y-3 text-sm leading-6 text-muted">
-              <li><i class="ri-map-pin-line"></i> Pilih area yang paling dekat dengan rute kamu.</li>
-              <li><i class="ri-time-line"></i> Cek jam buka, terutama untuk malam atau pagi.</li>
-              <li><i class="ri-wifi-line"></i> Untuk WFC, prioritaskan WiFi, colokan, dan suasana.</li>
-              <li><i class="ri-money-dollar-circle-line"></i> Bandingkan kisaran harga sebelum datang ramai-ramai.</li>
-            </ul>
-          </div>
-        </section>
+        <SeoIntentGuide page={page} places={places} isThin={isThinSeoPage} />
         <section class="mt-8">
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p class="text-sm text-muted">{places.length} tempat ditemukan.</p>
@@ -81,7 +89,7 @@ const landingFaq = [
         <section class="mt-10">
           <SeoContentRenderer blocks={page.content} />
         </section>
-        <section class="mt-10 rounded-[1.75rem] border border-line bg-surface p-6">
+        <section class="mt-10 border border-ink bg-surface p-6 shadow-offset">
           <p class="text-xs uppercase tracking-[0.25em] text-muted">FAQ lokal</p>
           <div class="mt-4 grid gap-4 lg:grid-cols-3">
             <div><h2 class="text-lg font-semibold">Apa halaman ini selalu update?</h2><p class="mt-2 text-sm leading-6 text-muted">Data tempat diperbarui dari admin editorial. Kalau ada info berubah, gunakan tombol laporan di halaman tempat.</p></div>
@@ -89,12 +97,23 @@ const landingFaq = [
             <div><h2 class="text-lg font-semibold">Apakah semua tempat sudah pernah dikunjungi?</h2><p class="mt-2 text-sm leading-6 text-muted">Beberapa tempat dikurasi dari data publik dan laporan lokal. Detail bisa berubah, jadi cek ulang sebelum berangkat.</p></div>
           </div>
         </section>
+        <section class="mt-10 grid gap-5 border border-ink bg-ink p-5 text-paper shadow-offset lg:grid-cols-[.8fr_1fr]">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Lanjut jelajah</p>
+            <h2 class="display-heading mt-3 text-5xl text-paper">Temukan pilihan lain</h2>
+          </div>
+          <div class="flex flex-wrap gap-2 self-end">
+            {parentLink && <a href={parentLink.href} class="rounded-full border border-paper px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">{parentLink.label}</a>}
+            {siblingLinks.map((link) => <a href={link.href} class="rounded-full border border-paper px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">{link.label}</a>)}
+            {siblingLinks.length === 0 && pillarLinks.map((link) => <a href={link.href} class="rounded-full border border-paper px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper no-underline hover:bg-paper hover:text-ink">{link.label}</a>)}
+          </div>
+        </section>
         <div class="mt-10">
           <RelatedSeoPages pages={relatedPages} />
         </div>
       </>
       ) : (
-        <div class="rounded-2xl border border-line bg-surface p-8"><h1 class="text-3xl font-bold">Halaman tidak ditemukan</h1><p class="mt-3 text-muted">Slug ini belum ada di seo_pages atau belum dipublish.</p></div>
+        <div class="border border-ink bg-surface p-8 shadow-offset"><h1 class="display-heading text-5xl">Halaman tidak ditemukan</h1><p class="mt-3 text-muted">Slug ini belum ada di seo_pages atau belum dipublish.</p></div>
       )}
     </Container>
   )}

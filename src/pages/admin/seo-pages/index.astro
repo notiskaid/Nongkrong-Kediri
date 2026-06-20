@@ -5,11 +5,14 @@ import type { SeoPage } from '@/types/seo-page';
 import { getAllSeoPagesForAdmin } from '@/lib/queries/seo-pages';
 let pages: SeoPage[] = [];
 let errorMessage = '';
+const currentStatus = Astro.url.searchParams.get('status') || 'all';
 try {
   pages = await getAllSeoPagesForAdmin(Astro.locals.supabase);
 } catch (error) {
   errorMessage = error instanceof Error ? error.message : 'Gagal mengambil data halaman SEO.';
 }
+const statusOptions = ['all', 'draft', 'published', 'archived'];
+const filteredPages = currentStatus === 'all' ? pages : pages.filter((page) => page.status === currentStatus);
 ---
 <AdminLayout title="Admin SEO Pages">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -17,11 +20,14 @@ try {
     <a href="/admin/seo-pages/new/" class="rounded-xl border border-ink bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline">Tambah SEO page</a>
   </div>
   {errorMessage && <div class="mb-5 rounded-2xl border border-line bg-surface p-5 text-sm text-muted">{errorMessage}</div>}
+  <div class="mb-5 flex flex-wrap gap-2">
+    {statusOptions.map((status) => <a href={status === 'all' ? '/admin/seo-pages/' : `/admin/seo-pages/?status=${status}`} class:list={["rounded-full border border-ink px-3 py-1.5 font-mono text-xs uppercase tracking-[0.12em] no-underline", currentStatus === status ? "bg-ink text-paper" : "bg-surface text-ink"]}>{status} ({status === 'all' ? pages.length : pages.filter((page) => page.status === status).length})</a>)}
+  </div>
   {!errorMessage && <div class="overflow-hidden rounded-2xl border border-line bg-surface">
     <table class="w-full text-left text-sm">
       <thead class="border-b border-line text-xs text-muted"><tr><th class="p-3">H1</th><th class="p-3">Slug</th><th class="p-3">Status</th><th class="p-3"></th></tr></thead>
       <tbody>
-        {pages.map((page) => (
+        {filteredPages.map((page) => (
           <tr class="border-b border-line last:border-0">
             <td class="p-3 font-semibold"><a href={`/${page.slug}/`} class="no-underline">{page.h1}</a></td>
             <td class="p-3 text-muted">/{page.slug}/</td>

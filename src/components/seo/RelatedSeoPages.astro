@@ -3,10 +3,10 @@ import type { SeoPage } from '@/types/seo-page';
 const { pages = [] } = Astro.props as { pages: SeoPage[] };
 ---
 {pages.length > 0 && (
-  <section class="rounded-2xl border border-line bg-surface p-5">
-    <h2 class="text-xl font-semibold">Halaman terkait</h2>
+  <section class="border border-ink bg-surface p-5 shadow-offset">
+    <h2 class="display-heading text-4xl">Halaman terkait</h2>
     <div class="mt-4 flex flex-wrap gap-2">
-      {pages.map((page) => <a href={`/${page.slug}/`} class="rounded-lg border border-line px-3 py-1.5 text-sm no-underline hover:border-ink">{page.h1}</a>)}
+      {pages.map((page) => <a href={`/${page.slug}/`} class="rounded-full border border-ink bg-paper px-3 py-1.5 font-mono text-xs uppercase tracking-[0.12em] no-underline hover:bg-butter">{page.h1}</a>)}
     </div>
   </section>
 )}

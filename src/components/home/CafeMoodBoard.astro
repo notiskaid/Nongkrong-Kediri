@@ -1,0 +1,29 @@
+---
+const moods = [
+  { label: 'Cafe buat laptopan', href: '/wfc-kediri/', tone: 'bg-sky/40', icon: 'ri-macbook-line' },
+  { label: 'Cafe view alam Kediri', href: '/cafe-view-alam-kediri/', tone: 'bg-butter/35', icon: 'ri-landscape-line' },
+  { label: 'Cafe murah Kediri', href: '/cafe-murah-kediri/', tone: 'bg-surface', icon: 'ri-money-dollar-circle-line' },
+  { label: 'Cafe dekat stasiun', href: '/cafe-dekat-stasiun-kediri/', tone: 'bg-ink text-paper', icon: 'ri-train-line' }
+];
+---
+<section>
+  <div class="mb-5 border-y border-ink py-5">
+    <p class="editorial-label">Moodboard cafe</p>
+    <h2 class="display-heading mt-2 text-5xl sm:text-7xl">Mau cafe model apa?</h2>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">Buka rekomendasi cafe Kediri berdasarkan momen: kerja, outdoor, hemat, atau dekat titik transit.</p>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {moods.map((item, index) => (
+      <a href={item.href} class:list={["group relative min-h-56 overflow-hidden border border-ink p-5 no-underline shadow-offset", item.tone]}>
+        <div class="absolute -right-8 -top-8 h-28 w-28 rounded-full border border-ink bg-butter transition group-hover:scale-110"></div>
+        <div class="relative z-10 flex h-full flex-col justify-between">
+          <span class="flex size-12 items-center justify-center rounded-full border border-ink bg-surface text-ink"><i class={`${item.icon} text-xl`}></i></span>
+          <div>
+            <p class="font-mono text-xs uppercase tracking-[0.16em] opacity-70">0{index + 1}</p>
+            <h3 class="display-heading mt-2 text-4xl">{item.label}</h3>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

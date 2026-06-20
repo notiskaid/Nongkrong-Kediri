@@ -19,6 +19,11 @@ type PlacePayload = {
   price_label?: string;
   rating?: number | null;
   rating_count?: number | null;
+  visited_at?: string;
+  editorial_rating?: number | null;
+  editorial_highlights?: string;
+  editorial_notes_cons?: string;
+  editorial_verdict?: string;
   opening_label?: string;
   status?: string;
   is_featured?: boolean;
@@ -27,6 +32,7 @@ type PlacePayload = {
   meta_description?: string;
   canonical_url?: string;
   robots?: string;
+  last_reviewed_at?: string;
   featured_image_url?: string;
   featured_image_alt?: string;
   categories?: string[];
@@ -35,6 +41,7 @@ type PlacePayload = {
 };
 
 function cleanPlacePayload(payload: PlacePayload) {
+  const hasEditorialVisit = Boolean(payload.visited_at || payload.editorial_rating || payload.editorial_highlights || payload.editorial_notes_cons || payload.editorial_verdict);
   return {
     name: payload.name,
     slug: payload.slug || slugify(payload.name),
@@ -52,6 +59,13 @@ function cleanPlacePayload(payload: PlacePayload) {
     price_label: payload.price_label || null,
     rating: payload.rating || null,
     rating_count: payload.rating_count || null,
+    ...(hasEditorialVisit ? {
+      visited_at: payload.visited_at || null,
+      editorial_rating: payload.editorial_rating || null,
+      editorial_highlights: payload.editorial_highlights || null,
+      editorial_notes_cons: payload.editorial_notes_cons || null,
+      editorial_verdict: payload.editorial_verdict || null
+    } : {}),
     opening_hours: payload.opening_label ? { label: payload.opening_label, is_24h: payload.opening_label.toLowerCase().includes('24') } : null,
     status: payload.status || 'draft',
     is_featured: Boolean(payload.is_featured),
@@ -60,6 +74,7 @@ function cleanPlacePayload(payload: PlacePayload) {
     meta_description: payload.meta_description || null,
     canonical_url: payload.canonical_url || null,
     robots: payload.robots || 'index,follow',
+    last_reviewed_at: payload.last_reviewed_at || null,
     updated_at: new Date().toISOString()
   };
 }
@@ -67,6 +82,7 @@ function cleanPlacePayload(payload: PlacePayload) {
 function validatePlacePayload(payload: PlacePayload) {
   if (!payload.name?.trim()) throw new Error('Nama tempat wajib diisi.');
   if (payload.rating != null && (payload.rating < 0 || payload.rating > 5)) throw new Error('Rating harus antara 0 sampai 5.');
+  if (payload.editorial_rating != null && (payload.editorial_rating < 1 || payload.editorial_rating > 5)) throw new Error('Nilai editorial harus antara 1 sampai 5.');
   if (payload.rating_count != null && payload.rating_count < 0) throw new Error('Jumlah rating tidak valid.');
   if (payload.price_min != null && payload.price_min < 0) throw new Error('Harga min tidak valid.');
   if (payload.price_max != null && payload.price_max < 0) throw new Error('Harga max tidak valid.');

@@ -21,23 +21,23 @@ const nav = [
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="bg-paper text-ink">
-    <div class:list={["min-h-screen", showNav && "lg:grid lg:grid-cols-[260px_1fr]"]}>
+    <div class:list={["min-h-screen", showNav && "lg:grid lg:grid-cols-[280px_1fr]"]}>
       {showNav && (
-        <aside class="border-b border-line bg-surface p-4 lg:min-h-screen lg:border-b-0 lg:border-r">
-          <a href="/admin/" class="flex items-center gap-2 text-lg font-semibold no-underline"><span class="flex size-9 items-center justify-center rounded-xl border border-line"><i class="ri-cup-line"></i></span> Admin NK</a>
-          <nav class="mt-6 flex gap-2 overflow-x-auto lg:block lg:space-y-1">
-            {nav.map((item) => <a href={item.href} class="flex min-w-max items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted no-underline hover:bg-paper hover:text-ink"><i class={item.icon}></i>{item.label}</a>)}
+        <aside class="border-b border-ink bg-ink p-4 text-paper lg:min-h-screen lg:border-b-0 lg:border-r">
+          <a href="/admin/" class="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-[0.18em] text-paper no-underline"><span class="flex size-10 items-center justify-center rounded-full border border-paper bg-butter text-ink"><i class="ri-cup-line"></i></span> Admin NK</a>
+          <nav class="mt-6 flex gap-2 overflow-x-auto lg:block lg:space-y-2">
+            {nav.map((item) => <a href={item.href} class="flex min-w-max items-center gap-2 rounded-full border border-paper/30 px-3 py-2 font-mono text-xs uppercase tracking-[0.12em] text-paper no-underline hover:bg-paper hover:text-ink"><i class={item.icon}></i>{item.label}</a>)}
           </nav>
-          <div class="mt-6 hidden text-xs leading-6 text-muted lg:block">
+          <div class="mt-6 hidden border border-paper/30 bg-coffee/40 p-4 text-xs leading-6 text-paper/70 lg:block">
             <p>Panel pengelolaan data tempat, halaman SEO, dan laporan pengunjung.</p>
-            <a href="/" class="mt-3 inline-block no-underline">← Lihat website</a>
+            <a href="/" class="mt-3 inline-block text-paper no-underline">← Lihat website</a>
             <form action="/api/admin/logout" method="post" class="mt-3">
-              <button class="text-xs text-muted underline underline-offset-4 hover:text-ink">Logout</button>
+              <button class="text-xs text-paper underline underline-offset-4">Logout</button>
             </form>
           </div>
         </aside>
       )}
-      <main class:list={["p-4 sm:p-6 lg:p-8", !showNav && "flex min-h-screen items-center justify-center"]}>
+      <main class:list={["admin-shell p-4 sm:p-6 lg:p-8", !showNav && "flex min-h-screen items-center justify-center bg-sky-sunset"]}>
         <slot />
       </main>
     </div>

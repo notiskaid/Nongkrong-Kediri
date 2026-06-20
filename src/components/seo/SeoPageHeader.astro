@@ -3,9 +3,9 @@ import AuthorDateMeta from './AuthorDateMeta.astro';
 import type { SeoPage } from '@/types/seo-page';
 const { page } = Astro.props as { page: SeoPage };
 ---
-<header class="border-b border-line pb-8">
-  <p class="mb-3 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">Panduan lokal</p>
-  <h1 class="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">{page.h1}</h1>
+<header class="section-masthead border-y border-ink p-6">
+  <p class="mb-3 inline-flex rounded-full border border-ink bg-surface px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-muted">Panduan lokal</p>
+  <h1 class="display-heading max-w-5xl text-6xl sm:text-8xl">{page.h1}</h1>
   {page.description && <p class="mt-5 max-w-3xl text-lg leading-8 text-muted">{page.description}</p>}
   <AuthorDateMeta page={page} />
 </header>

@@ -3,8 +3,8 @@ import Badge from '@/components/base/Badge.astro';
 import type { Place } from '@/types/place';
 const { place } = Astro.props as { place: Place };
 ---
-<section class="rounded-2xl border border-line bg-surface p-5">
-  <h2 class="text-xl font-semibold">Cocok untuk</h2>
+<section class="border border-ink bg-surface p-5 shadow-offset">
+  <h2 class="display-heading text-3xl">Cocok untuk</h2>
   <div class="mt-4 flex flex-wrap gap-2">
     {place.use_cases.length ? place.use_cases.map((term) => <Badge icon={term.icon}>{term.name}</Badge>) : <p class="text-sm text-muted">Use case belum dicatat.</p>}
   </div>

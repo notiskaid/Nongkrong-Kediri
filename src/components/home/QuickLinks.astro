@@ -1,20 +1,8 @@
 ---
 import { QUICK_KEYWORDS } from '@/lib/constants';
 ---
-<section>
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <p class="text-xs uppercase tracking-[0.25em] text-muted">Mulai dari momen</p>
-      <h2 class="mt-2 text-3xl font-semibold">Datang buat apa hari ini?</h2>
-    </div>
-  </div>
-  <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    {QUICK_KEYWORDS.map((item) => (
-      <a href={item.href} class="card-hover group rounded-3xl border border-line bg-surface p-5 no-underline">
-        <span class="flex size-11 items-center justify-center rounded-2xl border border-line bg-paper"><i class={`${item.icon} text-xl`}></i></span>
-        <p class="mt-4 font-semibold">{item.label}</p>
-        <p class="mt-2 text-xs leading-5 text-muted">Buka rekomendasi yang relevan, bukan daftar acak.</p>
-      </a>
-    ))}
+<section class="border-b border-ink bg-ink text-paper">
+  <div class="nk-scrollbar mx-auto flex max-w-[1180px] justify-start gap-4 overflow-x-auto px-4 py-4 font-mono text-xs font-bold uppercase tracking-[0.16em] sm:flex-wrap sm:justify-center sm:px-6 lg:px-8">
+    {QUICK_KEYWORDS.map((item) => <a href={item.href} class="shrink-0 py-1 text-paper no-underline hover:text-butter">{item.label}</a>)}
   </div>
 </section>

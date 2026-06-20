@@ -3,6 +3,7 @@ import 'remixicon/fonts/remixicon.css';
 import '@/assets/styles/global.css';
 import SiteHeader from '@/components/layout/SiteHeader.astro';
 import SiteFooter from '@/components/layout/SiteFooter.astro';
+import CustomScripts from '@/components/seo/CustomScripts.astro';
 import { titleTemplate, truncateDescription } from '@/lib/seo/meta';
 import { canonicalUrl } from '@/lib/seo/canonical';
 import { siteUrl } from '@/lib/constants';
@@ -45,7 +46,12 @@ const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={pageImage} />
     <meta name="theme-color" content="#111111" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <CustomScripts placement="head" />
+    <slot name="head" />
     <script is:inline>
       try {
         const saved = localStorage.getItem('nk-theme');
@@ -56,10 +62,13 @@ const schemas = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : [jsonLd].filter
     {schemas.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
   </head>
   <body>
+    <CustomScripts placement="body-start" />
+    <slot name="body-start" />
     {!hideHeader && <SiteHeader />}
     <main>
       <slot />
     </main>
     {!hideFooter && <SiteFooter />}
+    <slot name="body-end" />
   </body>
 </html>

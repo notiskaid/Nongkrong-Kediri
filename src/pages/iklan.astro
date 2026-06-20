@@ -1,0 +1,113 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/base/Container.astro';
+import { SITE } from '@/lib/constants';
+import { breadcrumbSchema } from '@/lib/seo/schema';
+
+const packages = [
+  {
+    name: 'Listing Boost',
+    eyebrow: 'sponsor slot',
+    description: 'Tempatmu tampil sebagai card sponsor di halaman listing yang relevan, tetap dengan label iklan yang jelas.',
+    includes: ['Label sponsor transparan', 'Masuk kategori/area yang cocok', 'CTA ke detail tempat atau Maps']
+  },
+  {
+    name: 'Homepage Spotlight',
+    eyebrow: 'front page',
+    description: 'Satu blok editorial di homepage untuk tempat baru, promo komunitas, atau spot WFC pilihan minggu ini.',
+    includes: ['Card besar bergaya majalah', 'Copy pendek non-spam', 'Cocok untuk launching atau seasonal promo']
+  },
+  {
+    name: 'Halaman Rekomendasi Sponsor',
+    eyebrow: 'halaman relevan',
+    description: 'Sponsor di halaman seperti WFC Kediri, cafe outdoor, murah, dekat kampus, atau area tertentu.',
+    includes: ['Placement kontekstual', 'Target berdasarkan kebutuhan pembaca', 'Tidak mengganggu daftar rekomendasi']
+  },
+  {
+    name: 'Event Promo',
+    eyebrow: 'komunitas',
+    description: 'Promosi event lokal seperti open mic, nobar, workshop, meet up, atau agenda komunitas cafe.',
+    includes: ['Slot ticker/section event', 'Tanggal dan lokasi jelas', 'CTA registrasi atau kontak']
+  }
+];
+---
+<BaseLayout
+  title="Iklan di Nongkrong Kediri"
+  description="Pasang iklan listing sponsor, spotlight homepage, sponsor halaman rekomendasi, atau promo event lokal di Nongkrong Kediri."
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Iklan', href: '/iklan/' }])]}
+>
+  <Container class="py-12">
+    <section class="section-masthead border-y border-ink p-6">
+      <p class="mb-4 inline-flex rounded-full border border-ink bg-surface px-4 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-muted">Media kit lokal</p>
+      <h1 class="display-heading text-6xl sm:text-8xl">Iklan tanpa terasa spam</h1>
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted">Promosikan cafe, warkop, WFC, event, atau brand lokal lewat listing sponsor yang tetap rapi, transparan, dan relevan dengan pencari tempat nongkrong di Kediri.</p>
+    </section>
+
+    <section class="mt-10 grid gap-6 lg:grid-cols-[1fr_.75fr]">
+      <div class="border border-ink bg-surface p-6 shadow-offset">
+        <p class="editorial-label">Konsep iklan</p>
+        <h2 class="display-heading mt-3 text-5xl">Featured listing, bukan banner random</h2>
+        <div class="mt-5 grid gap-4 text-sm leading-7 text-muted sm:grid-cols-2">
+          <p><strong class="text-ink">Relevan.</strong> Iklan masuk ke halaman yang sesuai: WFC, outdoor, murah, area, atau homepage.</p>
+          <p><strong class="text-ink">Transparan.</strong> Setiap placement berbayar diberi label sponsor/iklan.</p>
+          <p><strong class="text-ink">Berguna.</strong> Tetap menampilkan info yang dicari pembaca: area, fasilitas, jam, harga, CTA.</p>
+          <p><strong class="text-ink">Kurasi.</strong> Kami tidak menerima klaim palsu, aset curian, atau promosi yang menyesatkan.</p>
+        </div>
+      </div>
+      <aside class="border border-ink bg-ink p-6 text-paper shadow-offset">
+        <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Audience</p>
+        <ul class="mt-5 space-y-3 text-sm leading-6 text-paper/75">
+          <li>Pencari cafe dan tempat ngopi di Kediri.</li>
+          <li>Mahasiswa dan pekerja yang butuh WFC.</li>
+          <li>Komunitas lokal yang cari tempat kumpul.</li>
+          <li>Cafe hopper, warga lokal, dan pengunjung area Kediri.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="mt-10">
+      <div class="mb-5 flex flex-wrap items-end justify-between gap-4 border-y border-ink py-5">
+        <div>
+          <p class="editorial-label">Paket iklan</p>
+          <h2 class="display-heading mt-2 text-5xl sm:text-7xl">Pilih format</h2>
+        </div>
+        <a href={`mailto:${SITE.email}?subject=Iklan%20Nongkrong%20Kediri`} class="rounded-full border border-ink bg-butter px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline">Tanya slot</a>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        {packages.map((item, index) => (
+          <article class:list={["border border-ink p-5 shadow-offset", index === 1 ? "bg-butter/35" : index === 2 ? "bg-sky/40" : "bg-surface"]}>
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted">{item.eyebrow}</p>
+            <h3 class="display-heading mt-3 text-4xl">{item.name}</h3>
+            <p class="mt-3 text-sm leading-7 text-muted">{item.description}</p>
+            <ul class="mt-5 space-y-2 border-t border-ink pt-4 font-mono text-xs uppercase tracking-[0.12em] text-ink">
+              {item.includes.map((line) => <li>{line}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-10 grid gap-6 lg:grid-cols-[.8fr_1fr]">
+      <div class="border border-ink bg-butter/30 p-6 shadow-offset">
+        <p class="editorial-label">Aturan main</p>
+        <h2 class="display-heading mt-3 text-5xl">Tetap jelas</h2>
+      </div>
+      <div class="grid gap-3 text-sm leading-7 text-muted">
+        <p class="border border-ink bg-surface p-4"><strong class="text-ink">Tidak menipu pembaca.</strong> Sponsor selalu diberi label dan tidak disamarkan sebagai rekomendasi organik.</p>
+        <p class="border border-ink bg-surface p-4"><strong class="text-ink">Data harus bisa dicek.</strong> Alamat, jam buka, fasilitas, dan klaim promo harus valid.</p>
+        <p class="border border-ink bg-surface p-4"><strong class="text-ink">Aset original.</strong> Pengiklan wajib punya hak atas foto/logo/copy yang dikirim.</p>
+      </div>
+    </section>
+
+    <section class="mt-10 border border-ink bg-ink p-6 text-paper shadow-offset">
+      <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Inquiry</p>
+      <div class="mt-4 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <h2 class="display-heading text-5xl text-paper sm:text-7xl">Mau pasang listing?</h2>
+          <p class="mt-4 max-w-2xl text-sm leading-7 text-paper/70">Kirim nama tempat/brand, target halaman, periode campaign, dan link aset. Nanti bisa dipilih apakah cocok untuk listing boost, homepage spotlight, sponsor halaman, atau event promo.</p>
+        </div>
+        <a href={`mailto:${SITE.email}?subject=Iklan%20Nongkrong%20Kediri`} class="rounded-full border border-paper bg-paper px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-ink no-underline">Email sekarang</a>
+      </div>
+    </section>
+  </Container>
+</BaseLayout>

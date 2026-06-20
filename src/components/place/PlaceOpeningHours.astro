@@ -3,8 +3,8 @@ import type { Place } from '@/types/place';
 const { place } = Astro.props as { place: Place };
 const raw = place.opening_hours?.raw || [];
 ---
-<section class="rounded-2xl border border-line bg-surface p-5">
-  <h2 class="text-xl font-semibold">Jam buka</h2>
+<section class="border border-ink bg-surface p-5 shadow-offset">
+  <h2 class="display-heading text-3xl">Jam buka</h2>
   {raw.length ? (
     <ul class="mt-4 space-y-2 text-sm text-muted">
       {raw.map((item) => <li>{item}</li>)}

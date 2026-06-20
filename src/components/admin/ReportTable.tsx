@@ -14,6 +14,7 @@ type Report = {
 
 export default function ReportTable({ reports }: { reports: Report[] }) {
   const [items, setItems] = useState(reports);
+  const actions = ['reviewed', 'resolved', 'rejected'];
 
   async function updateStatus(id: string, status: string) {
     const response = await fetch(`/api/admin/reports/${id}`, {
@@ -43,7 +44,15 @@ export default function ReportTable({ reports }: { reports: Report[] }) {
               <td className="p-3 text-muted">{report.report_type}</td>
               <td className="p-3 text-muted">{report.message || '-'}</td>
               <td className="p-3">{report.status}</td>
-              <td className="p-3"><button onClick={() => updateStatus(report.id, 'resolved')} className="rounded-lg border border-line px-2 py-1 text-xs">resolve</button></td>
+              <td className="p-3">
+                <div className="flex flex-wrap gap-2">
+                  {actions.map((action) => (
+                    <button key={action} onClick={() => updateStatus(report.id, action)} disabled={report.status === action} className="border border-line px-2 py-1 text-xs disabled:opacity-50">
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -7,7 +7,11 @@ const photos = place.photos || [];
   <section>
     <h2 class="text-xl font-semibold">Galeri</h2>
     <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {photos.map((photo) => <img src={photo.url} alt={photo.alt || place.name} class="aspect-[4/3] rounded-2xl border border-line object-cover" loading="lazy" />)}
+      {photos.map((photo) => (
+        <a href={photo.url} class="nk-photo-frame" data-lightbox-image aria-label={`Lihat foto ${photo.alt || place.name}`}>
+          <img src={photo.url} alt={photo.alt || place.name} class="aspect-[4/3]" loading="lazy" />
+        </a>
+      ))}
     </div>
   </section>
 )}

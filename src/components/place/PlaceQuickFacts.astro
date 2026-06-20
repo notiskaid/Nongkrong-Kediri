@@ -7,13 +7,13 @@ const facts = [
   { icon: 'ri-map-pin-line', label: 'Area', value: place.area_name || 'Kediri' },
   { icon: 'ri-time-line', label: 'Jam buka', value: openingHoursLabel(place.opening_hours) },
   { icon: 'ri-money-dollar-circle-line', label: 'Harga', value: formatPriceRange(place.price_min, place.price_max, place.price_label) },
-  { icon: 'ri-star-line', label: 'Rating', value: place.rating ? `${place.rating}${place.rating_count ? ` (${place.rating_count})` : ''}` : 'Belum tersedia' }
+  { icon: 'ri-star-line', label: 'Rating Google', value: place.rating ? `${place.rating}${place.rating_count ? ` (${place.rating_count})` : ''}` : 'Belum tersedia' }
 ];
 ---
 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
   {facts.map((fact) => (
-    <div class="rounded-2xl border border-line bg-surface p-4">
-      <div class="flex items-center gap-2 text-xs text-muted"><i class={fact.icon}></i>{fact.label}</div>
+    <div class="border border-ink bg-surface p-4 shadow-offset">
+      <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-muted"><i class={fact.icon}></i>{fact.label}</div>
       <p class="mt-2 text-sm font-semibold leading-6">{fact.value}</p>
     </div>
   ))}

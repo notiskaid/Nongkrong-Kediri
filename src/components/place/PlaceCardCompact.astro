@@ -1,8 +1,29 @@
 ---
+import Badge from '@/components/base/Badge.astro';
 import type { Place } from '@/types/place';
 const { place } = Astro.props as { place: Place };
+const tags = [...(place.use_cases || []), ...(place.facilities || [])].slice(0, 2);
 ---
-<article class="card-hover rounded-2xl border border-line bg-surface p-4">
-  <h3 class="font-semibold"><a href={`/tempat/${place.slug}/`} class="no-underline">{place.name}</a></h3>
-  <p class="mt-1 text-xs text-muted">{place.area_name || 'Kediri'} • {place.use_cases.slice(0, 2).map((t) => t.name).join(', ')}</p>
+<article class="card-hover grid grid-cols-[88px_minmax(0,1fr)] gap-3 border border-ink bg-surface p-3">
+  <a href={`/tempat/${place.slug}/`} class="block overflow-hidden border border-ink bg-paper no-underline" aria-label={`Lihat ${place.name}`}>
+    {place.featured_image_url ? (
+      <img src={place.featured_image_url} alt={place.featured_image_alt || place.name} class="aspect-square h-full w-full object-cover" loading="lazy" />
+    ) : (
+      <div class="grid aspect-square place-items-center bg-butter/25 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">No foto</div>
+    )}
+  </a>
+  <div class="min-w-0">
+    <div class="mb-2 flex flex-wrap gap-1.5">
+      {place.area_name && <Badge icon="ri-map-pin-line">{place.area_name}</Badge>}
+      {place.rating && <Badge icon="ri-star-fill">{place.rating}</Badge>}
+    </div>
+    <h3 class="line-clamp-2 font-display text-xl font-black uppercase leading-[0.95] tracking-[-0.05em]"><a href={`/tempat/${place.slug}/`} class="text-ink no-underline hover:text-muted">{place.name}</a></h3>
+    {place.excerpt && <p class="mt-2 line-clamp-2 text-xs leading-5 text-muted">{place.excerpt}</p>}
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex flex-wrap gap-1.5">
+        {tags.map((term) => <span class="rounded-full border border-line px-2 py-1 text-[10px] font-semibold text-muted">{term.name}</span>)}
+      </div>
+      <a href={`/tempat/${place.slug}/`} class="font-mono text-[10px] font-black uppercase tracking-[0.14em] no-underline hover:text-muted">Detail</a>
+    </div>
+  </div>
 </article>

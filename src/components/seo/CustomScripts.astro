@@ -1,0 +1,33 @@
+---
+const env = Astro.locals.runtime?.env || {};
+const googleSiteVerification = env.PUBLIC_GOOGLE_SITE_VERIFICATION || import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const gaId = env.PUBLIC_GA_ID || import.meta.env.PUBLIC_GA_ID;
+const gtmId = env.PUBLIC_GTM_ID || import.meta.env.PUBLIC_GTM_ID;
+const placement = Astro.props.placement || 'head';
+---
+{placement === 'head' && (
+  <>
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
+    {gaId && <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>}
+    {gaId && (
+      <script is:inline define:vars={{ gaId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){window.dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', gaId);
+      </script>
+    )}
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',gtmId);
+      </script>
+    )}
+  </>
+)}
+{placement === 'body-start' && gtmId && (
+  <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+)}

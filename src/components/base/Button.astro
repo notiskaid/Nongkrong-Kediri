@@ -1,4 +1,6 @@
 ---
+import { isExternalHttpUrl, withOutboundSource } from '@/lib/utils/outbound-url';
+
 type Variant = 'primary' | 'secondary' | 'ghost';
 const { href, variant = 'secondary', class: className = '', icon, type = 'button' } = Astro.props as {
   href?: string;
@@ -8,14 +10,16 @@ const { href, variant = 'secondary', class: className = '', icon, type = 'button
   type?: 'button' | 'submit' | 'reset';
 };
 const variants = {
-  primary: 'border-ink bg-ink text-paper hover:bg-muted hover:text-paper',
-  secondary: 'border-line bg-surface text-ink hover:border-ink hover:text-ink',
+  primary: 'border-ink bg-ink text-paper shadow-offset hover:-translate-y-0.5 hover:bg-coffee hover:text-paper',
+  secondary: 'border-ink bg-surface text-ink hover:-translate-y-0.5 hover:bg-butter hover:text-ink',
   ghost: 'border-transparent bg-transparent text-ink hover:bg-surface hover:text-ink'
 };
-const classes = `focus-ring inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium no-underline shadow-soft ${variants[variant]} ${className}`;
+const classes = `focus-ring inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-mono text-xs font-extrabold uppercase tracking-[0.14em] no-underline transition duration-300 ${variants[variant]} ${className}`;
+const isExternal = isExternalHttpUrl(href);
+const finalHref = withOutboundSource(href);
 ---
 {href ? (
-  <a href={href} class={classes}>{icon && <i class={icon}></i>}<slot /></a>
+  <a href={finalHref} class={classes} target={isExternal ? '_blank' : undefined} rel={isExternal ? 'noopener noreferrer' : undefined}>{icon && <i class={icon}></i>}<slot /></a>
 ) : (
   <button type={type} class={classes}>{icon && <i class={icon}></i>}<slot /></button>
 )}

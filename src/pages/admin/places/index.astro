@@ -1,15 +1,18 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
-import StatusBadge from '@/components/admin/StatusBadge.astro';
+import PlacesTable from '@/components/admin/PlacesTable';
 import type { Place } from '@/types/place';
 import { getAllPlacesForAdmin } from '@/lib/queries/places';
 let places: Place[] = [];
 let errorMessage = '';
+const currentStatus = Astro.url.searchParams.get('status') || 'all';
 try {
   places = await getAllPlacesForAdmin(Astro.locals.supabase);
 } catch (error) {
   errorMessage = error instanceof Error ? error.message : 'Gagal mengambil data tempat.';
 }
+const statusOptions = ['all', 'draft', 'review', 'published', 'archived', 'closed'];
+const filteredPlaces = currentStatus === 'all' ? places : places.filter((place) => place.status === currentStatus);
 ---
 <AdminLayout title="Admin Places">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -17,14 +20,8 @@ try {
     <a href="/admin/places/new/" class="rounded-xl border border-ink bg-ink px-4 py-2 text-sm font-semibold text-paper no-underline">Tambah tempat</a>
   </div>
   {errorMessage && <div class="mb-5 rounded-2xl border border-line bg-surface p-5 text-sm text-muted">{errorMessage}</div>}
-  {!errorMessage && <div class="overflow-hidden rounded-2xl border border-line bg-surface">
-    <table class="w-full text-left text-sm">
-      <thead class="border-b border-line text-xs text-muted"><tr><th class="p-3">Nama</th><th class="p-3">Status</th><th class="p-3">Area</th><th class="p-3">Kategori</th><th class="p-3"></th></tr></thead>
-      <tbody>
-        {places.map((place) => (
-          <tr class="border-b border-line last:border-0"><td class="p-3 font-semibold"><a href={`/tempat/${place.slug}/`} class="no-underline">{place.name}</a></td><td class="p-3"><StatusBadge status={place.status} /></td><td class="p-3 text-muted">{place.area_name}</td><td class="p-3 text-muted">{place.categories.map((c) => c.name).join(', ')}</td><td class="p-3"><a href={`/admin/places/${place.id}/edit/`} class="no-underline">edit</a></td></tr>
-        ))}
-      </tbody>
-    </table>
-  </div>}
+  <div class="mb-5 flex flex-wrap gap-2">
+    {statusOptions.map((status) => <a href={status === 'all' ? '/admin/places/' : `/admin/places/?status=${status}`} class:list={["rounded-full border border-ink px-3 py-1.5 font-mono text-xs uppercase tracking-[0.12em] no-underline", currentStatus === status ? "bg-ink text-paper" : "bg-surface text-ink"]}>{status} ({status === 'all' ? places.length : places.filter((place) => place.status === status).length})</a>)}
+  </div>
+  {!errorMessage && <PlacesTable client:load places={filteredPlaces} />}
 </AdminLayout>

@@ -3,14 +3,16 @@ import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
 import type { Place } from '@/types/place';
 const { places = [] } = Astro.props as { places: Place[] };
 ---
-<section>
-  <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <p class="text-xs uppercase tracking-[0.25em] text-muted">Kerja dari cafe</p>
-      <h2 class="mt-2 text-3xl font-semibold">WFC yang lebih siap buat laptopan</h2>
-      <p class="mt-2 max-w-2xl text-sm leading-6 text-muted">Prioritas tempat dengan kebutuhan dasar seperti WiFi, colokan, dan suasana yang lebih masuk akal untuk fokus.</p>
+<section class="bg-black-coffee border-y border-ink py-14 text-paper">
+  <div class="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-8">
+    <div class="mb-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-butter">Kerja dari cafe</p>
+        <h2 class="display-heading mt-2 text-5xl text-paper sm:text-7xl">WFC buat laptopan</h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-paper/70">Prioritas tempat dengan WiFi, colokan, dan suasana yang lebih masuk akal untuk fokus.</p>
+      </div>
+      <a href="/wfc-kediri/" class="rounded-full border border-paper bg-paper px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] text-ink no-underline">Cafe WFC →</a>
     </div>
-    <a href="/wfc-kediri/" class="text-sm no-underline">lihat WFC →</a>
+    <PlaceListingGrid places={places} />
   </div>
-  <PlaceListingGrid places={places} />
 </section>

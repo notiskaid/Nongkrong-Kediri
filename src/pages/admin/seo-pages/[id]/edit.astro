@@ -1,16 +1,25 @@
 ---
 import AdminLayout from '@/components/admin/AdminLayout.astro';
+import DangerDelete from '@/components/admin/DangerDelete';
 import SeoPageForm from '@/components/admin/SeoPageForm';
 import { getSeoPageByIdForAdmin } from '@/lib/queries/seo-pages';
+import { getAreas, getCategories, getFacilities, getUseCases } from '@/lib/queries/taxonomy';
 const id = Astro.params.id!;
 const page = await getSeoPageByIdForAdmin(Astro.locals.supabase, id);
+const [areas, categories, useCases, facilities] = await Promise.all([
+  getAreas(Astro.locals.supabase),
+  getCategories(Astro.locals.supabase),
+  getUseCases(Astro.locals.supabase),
+  getFacilities(Astro.locals.supabase)
+]);
 if (!page) Astro.response.status = 404;
 ---
 <AdminLayout title={page ? `Edit ${page.h1}` : 'SEO page tidak ditemukan'}>
   {page ? (
     <>
       <div class="mb-6 flex flex-wrap items-center justify-between gap-4"><div><h1 class="text-3xl font-bold">Edit SEO page</h1><p class="mt-2 text-sm text-muted">/{page.slug}/</p></div><a href={`/${page.slug}/`} class="rounded-xl border border-line bg-surface px-4 py-2 text-sm no-underline">Preview</a></div>
-      <SeoPageForm client:load page={page} />
+      <SeoPageForm client:load page={page} areas={areas} categories={categories} useCases={useCases} facilities={facilities} />
+      <DangerDelete client:load endpoint={`/api/admin/seo-pages/${page.id}`} confirmText={page.slug} redirectTo="/admin/seo-pages/" />
     </>
   ) : <div class="rounded-2xl border border-line bg-surface p-6">SEO page tidak ditemukan.</div>}
 </AdminLayout>

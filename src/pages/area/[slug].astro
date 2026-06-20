@@ -3,40 +3,70 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/base/Container.astro';
 import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
 import PlaceListingGrid from '@/components/listing/PlaceListingGrid.astro';
-import { getAreaBySlug } from '@/lib/queries/taxonomy';
+import { getAreaBySlug, getAreas } from '@/lib/queries/taxonomy';
 import { getPlacesByArea } from '@/lib/queries/places';
 import { breadcrumbSchema, itemListSchema } from '@/lib/seo/schema';
+import { isAreaIndexable } from '@/lib/seo/indexability';
+import { isRedirectPath, SILO_CLUSTERS } from '@/lib/seo/silo';
+
+const areaNotes: Record<string, string> = {
+  mojoroto: 'Mojoroto cenderung cocok untuk mahasiswa, nugas, WFC ringan, dan janjian santai karena dekat area kampus dan kos. Perhatikan jam ramai sore sampai malam, terutama tempat yang populer untuk laptopan.',
+  'kota-kediri': 'Kota Kediri cocok untuk titik temu yang mudah dijangkau, transit, atau mencari cafe dekat pusat aktivitas. Area ini biasanya lebih praktis untuk agenda singkat, meeting ringan, dan nongkrong setelah urusan di tengah kota.',
+  pesantren: 'Pesantren memberi opsi nongkrong di sisi timur Kediri dengan karakter tempat yang lebih tersebar. Cocok untuk warga sekitar yang ingin menghindari pusat kota, tapi tetap perlu mengecek parkir dan jam operasional sebelum berangkat.',
+  'dekat-stasiun-kediri': 'Area dekat Stasiun Kediri paling berguna untuk transit, janjian singkat, atau menunggu jadwal perjalanan. Prioritaskan tempat dengan akses mudah, jam buka jelas, dan rute pulang yang praktis.',
+  'dekat-kampus': 'Area dekat kampus ideal untuk nugas, kerja kelompok, dan nongkrong hemat. Cek WiFi, colokan, noise level, dan apakah tempatnya tetap nyaman saat jam ramai mahasiswa.'
+};
 
 const slug = Astro.params.slug!;
 const area = await getAreaBySlug(Astro.locals.supabase, slug);
+const areas = await getAreas(Astro.locals.supabase);
 const places = area ? await getPlacesByArea(Astro.locals.supabase, slug) : [];
 if (!area) Astro.response.status = 404;
 const pseudoPage = area ? { id: area.slug, slug: `area/${area.slug}`, h1: `Tempat Ngopi di ${area.name}`, title: `Tempat Ngopi di ${area.name}`, page_type: 'area' } as any : null;
+const allPlaces = places;
+const areaRobots = area && isAreaIndexable(area, places) ? 'index,follow' : 'noindex,follow';
+const siblingAreas = area ? areas.filter((item) => item.slug !== area.slug && !isRedirectPath(`/area/${item.slug}/`)).slice(0, 4) : [];
+const relevantIntentLinks = area && places.length ? Object.values(SILO_CLUSTERS).flatMap((cluster) => cluster.pages).filter((link) => places.some((place) => [...place.use_cases, ...place.facilities].some((term) => link.slug.includes(term.slug)))).slice(0, 4) : [];
 ---
 <BaseLayout
   title={area ? `Tempat Ngopi di ${area.name}` : 'Area tidak ditemukan'}
   description={area?.description || `Direktori tempat ngopi dan nongkrong di area ${area?.name || 'Kediri'}.`}
-  jsonLd={area ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Area', href: `/area/${area.slug}/` }]), itemListSchema(pseudoPage, places)] : []}
+  robots={areaRobots}
+  jsonLd={area ? [breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Area', href: '/area/' }, { name: area.name, href: `/area/${area.slug}/` }]), itemListSchema(pseudoPage, places)] : []}
 >
   <Container class="py-10">
     {area ? (
       <>
-        <Breadcrumbs items={[{ label: 'area' }, { label: area.name }]} />
-        <header class="border-b border-line pb-8">
-          <p class="mb-3 inline-flex rounded-lg border border-line bg-surface px-3 py-1 text-xs text-muted">area</p>
-          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Tempat Ngopi di {area.name}</h1>
+        <Breadcrumbs items={[{ label: 'area', href: '/area/' }, { label: area.name }]} />
+        <header class="section-masthead border-y border-ink p-6">
+          <p class="mb-3 inline-flex rounded-full border border-ink bg-surface px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-muted">area</p>
+          <h1 class="display-heading text-5xl sm:text-7xl">Tempat Ngopi di {area.name}</h1>
           {area.description && <p class="mt-5 max-w-3xl text-lg leading-8 text-muted">{area.description}</p>}
         </header>
         <section class="mt-8">
           <PlaceListingGrid places={places} emptyTitle="Belum ada tempat di area ini" emptyDescription="Tambahkan tempat lewat admin atau submit tempat." />
         </section>
-        <section class="prose-nk mt-10 rounded-2xl border border-line bg-surface p-5">
+        <section class="prose-nk mt-10 border border-ink bg-surface p-5 shadow-offset">
           <h2>Catatan area {area.name}</h2>
-          <p>Konten area bisa dibuat manual untuk memperkuat konteks lokal, akses, waktu terbaik datang, dan tipe tempat yang dominan di area ini.</p>
+          <p>{areaNotes[area.slug] || `Area ${area.name} bisa jadi titik awal untuk menyaring cafe, tempat ngopi, WFC, dan tempat nongkrong berdasarkan jarak, akses, serta kebutuhan datang. Cek kembali jam buka, fasilitas, dan rute sebelum berangkat.`}</p>
+        </section>
+        <section class="mt-10 grid gap-5 lg:grid-cols-[.8fr_1fr]">
+          <div class="border border-ink bg-ink p-5 text-paper shadow-offset">
+            <p class="font-mono text-xs uppercase tracking-[0.22em] text-butter">Lanjut jelajah</p>
+            <h2 class="display-heading mt-3 text-5xl text-paper">Pilihan terkait</h2>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <a href="/area/" class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">Semua area Kediri</a>
+            <a href="/cafe-kediri/" class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">Cafe Kediri</a>
+            <a href="/tempat-ngopi-kediri/" class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">Tempat ngopi Kediri</a>
+            <a href="/wfc-kediri/" class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">WFC Kediri</a>
+            {relevantIntentLinks.map((item) => <a href={item.href} class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">{item.label}</a>)}
+            {siblingAreas.map((item) => <a href={`/area/${item.slug}/`} class="border border-ink bg-surface p-4 font-mono text-xs font-bold uppercase tracking-[0.14em] no-underline shadow-offset">Area {item.name}</a>)}
+          </div>
         </section>
       </>
     ) : (
-      <div class="rounded-2xl border border-line bg-surface p-8"><h1 class="text-3xl font-bold">Area tidak ditemukan</h1></div>
+      <div class="border border-ink bg-surface p-8 shadow-offset"><h1 class="display-heading text-5xl">Area tidak ditemukan</h1></div>
     )}
   </Container>
 </BaseLayout>

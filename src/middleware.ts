@@ -1,9 +1,16 @@
 import { defineMiddleware } from 'astro:middleware';
 import { getAdminSession } from '@/lib/admin/session';
 import { getSupabaseAdmin, getSupabaseServer, isSupabaseConfigured } from '@/lib/supabase/server';
+import { redirectTarget } from '@/lib/seo/silo';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const path = context.url.pathname;
+  const target = redirectTarget(path);
+  if (target) {
+    const url = new URL(target, context.url.origin);
+    return Response.redirect(url, 301);
+  }
+
   const isApiRoute = path.startsWith('/api/');
 
   if (isApiRoute) {

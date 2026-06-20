@@ -1,6 +1,6 @@
 ---
 const { icon, href, class: className = '' } = Astro.props;
-const base = `inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs text-muted no-underline ${className}`;
+const base = `inline-flex items-center gap-1.5 rounded-full border border-ink bg-surface px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted no-underline ${className}`;
 ---
 {href ? (
   <a href={href} class={base}>{icon && <i class={icon}></i>}<slot /></a>
